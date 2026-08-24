@@ -1,256 +1,284 @@
 # 🏥 ClinicAssist
 
-A full-stack healthcare appointment and follow-up management platform with separate portals for **patients**, **doctors**, and **clinic admins**.
+> **Smart Healthcare Appointment & Follow-up Management**
 
-ClinicAssist streamlines the complete appointment workflow — from doctor discovery and symptom collection to appointment booking, AI-assisted pre-visit briefs, live queue management, prescriptions, follow-up summaries, email notifications, Google Sign-In, and Google Calendar integration.
+ClinicAssist is a full-stack healthcare appointment platform connecting **patients, doctors, and clinic administrators** through one workflow.
 
-## ✨ Features
+Patients can find doctors by specialization, describe symptoms before a visit, book available slots, receive appointment notifications, track token numbers, download prescriptions, and add appointments directly to their calendar.
 
-### 👤 Patients
+Doctors get a live appointment queue, AI-assisted pre-visit summaries, urgency indicators, patient information, and post-visit documentation tools.
 
-- Register and securely log in
-- Sign in with Google
-- Browse doctors by specialization
-- View available appointment slots
-- Book appointments
-- Describe symptoms before the visit
-- Receive an AI-generated pre-visit summary
-- Get appointment token numbers
-- Track appointment and queue status
-- Cancel appointments
-- Receive appointment confirmation emails
-- Add appointments to calendar
-- View post-visit summaries
-- View prescriptions and follow-up information
-
-The booking flow collects symptoms before confirmation and informs the doctor that an AI-generated summary and urgency flag will be available before the visit. :contentReference[oaicite:2]{index=2}
-
-### 👨‍⚕️ Doctors
-
-- Secure doctor login
-- View today's appointments
-- Manage live patient queue
-- View patient symptoms before the appointment
-- View AI-generated visit briefs
-- See urgency indicators
-- View patient appointment history
-- Add clinical notes
-- Create prescriptions
-- Complete visits
-- Generate patient-friendly post-visit summaries
-- Manage working schedule
-- Handle appointment-related actions
-
-### 🛡️ Clinic Admins
-
-- Secure admin dashboard
-- Create and manage doctor accounts
-- Manage doctor specializations
-- Configure working hours
-- Configure appointment slot duration
-- Manage doctor leave
-- View appointments
-- Manage clinic operations
-- Monitor notification activity
+Administrators can manage doctors, working hours, leave requests, and clinic operations.
 
 ---
 
-## 🤖 AI-Assisted Healthcare Workflow
+## ✨ Key Features
 
-ClinicAssist uses Gemini to assist doctors with pre-visit and post-visit information.
+### 👤 Patient Portal
 
-### Pre-visit AI Brief
+- Secure registration and login
+- Search doctors by **specialization**
+- View doctor information, qualifications, bio, and availability
+- See whether a doctor is:
+  - 🟢 Available now
+  - 🟡 Available today
+  - ⚪ Not available today
+- Select appointment date and available time slot
+- Describe symptoms before confirming an appointment
+- Optionally provide a mobile number
+- Receive **appointment confirmation emails**
+- Receive cancellation and schedule-update notifications
+- View upcoming and past appointments
+- Track appointment **token number / queue position**
+- View AI-generated post-visit summaries
+- **Download prescriptions**
+- **Add appointments directly to Google Calendar / supported calendar applications**
+- Receive follow-up information
 
-Before an appointment, the patient's symptoms are processed into a structured brief containing information such as:
+### 👨‍⚕️ Doctor Portal
 
-- Urgency level
+- Dedicated doctor dashboard
+- View today's appointment queue
+- See patient token numbers and appointment status
+- Review patient-submitted symptoms
+- View an **AI-generated pre-visit summary**
+- See an AI-assisted urgency indicator
+- Manage appointment status
+- Record doctor notes
+- Create structured prescriptions
+- Generate patient-friendly post-visit summaries
+- Manage working availability
+- Receive **new appointment notification emails**
+- Receive cancellation and schedule-update notifications
+
+### 🛠️ Admin Portal
+
+- Dedicated administrator dashboard
+- Create and manage doctor accounts
+- Configure specialization, qualifications, bio, working hours, slot duration, and leave days
+- Manage doctor availability
+- Manage doctor leave
+- Monitor appointment operations
+
+### 🤖 AI-Assisted Healthcare Workflow
+
+ClinicAssist uses AI to help doctors prepare for appointments.
+
+**Pre-visit summary**
+
 - Chief complaint
+- Urgency level
 - Key symptoms
 - Suggested questions for the doctor
 
-Example:
-
-> **Medium urgency**
->
-> Dry cough and mild fever for 3 days, worse at night.
->
-> No shortness of breath  
-> No chest pain
-
-The AI summary is intended to help doctors prepare for the visit and does **not replace professional medical judgment or emergency services**.
-
-### Post-visit Summary
-
-After the doctor completes a visit, ClinicAssist can generate a patient-friendly summary containing:
+**Post-visit summary**
 
 - Visit summary
-- Medication instructions
+- Medication information
+- Follow-up instructions
+- Next steps
+
+> AI-generated information is assistive and does not replace professional medical judgment or emergency medical services.
+
+---
+
+## 📧 Email Notifications
+
+ClinicAssist keeps **both sides of the appointment informed**.
+
+### Patient receives
+
+- Appointment confirmation
+- Appointment cancellation or schedule updates
 - Follow-up information
-- Important instructions for the patient
+- Other appointment-related notifications
 
----
+### Doctor receives
 
-## 🏗️ Technology Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | React + TypeScript + Vite |
-| Styling | Tailwind CSS |
-| Backend | Node.js + Express |
-| Database | PostgreSQL |
-| ORM | Prisma |
-| Authentication | JWT |
-| Google Authentication | Google Identity Services |
-| AI | Google Gemini API |
-| Email | Brevo / transactional email |
-| Calendar | Google Calendar API |
-| API Testing | Postman |
-| Version Control | Git + GitHub |
-| Development | VS Code |
-
----
-
-## 📁 Project Structure
+- New appointment notification
+- Appointment cancellation or schedule updates
+- Relevant appointment information
+- Other appointment-related notifications
 
 ```text
-ClinicAssist/
-│
-├── frontend/
-│   ├── public/
-│   │   └── images/
-│   │       └── patient.jpg
-│   ├── src/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── ...
-│   ├── .env.example
-│   └── package.json
-│
-├── backend/
-│   ├── prisma/
-│   │   └── schema.prisma
-│   ├── src/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── middleware/
-│   │   ├── utils/
-│   │   └── ...
-│   ├── .env.example
-│   └── package.json
-│
-├── README.md
-└── ...
+Appointment Created
+        │
+        ├──► Patient confirmation email
+        │
+        └──► Doctor appointment notification
 ```
 
 ---
 
-# 🚀 1. Setup Guide
+## 📅 Calendar Integration
+
+Patients can add a confirmed appointment directly to their calendar.
+
+Calendar information can include:
+
+- Doctor name
+- Appointment date
+- Start time
+- End time
+- Appointment description
+
+ClinicAssist also supports Google Calendar OAuth integration.
+
+---
+
+## 💊 Prescription Management
+
+Doctors can create structured prescriptions containing:
+
+- Medicine name
+- Frequency
+- Duration
+- Additional instructions where applicable
+
+Patients can view the completed prescription and **download it for their records**.
+
+---
+
+## 🖼️ Screenshots
+
+Add project screenshots here.
+
+### Landing Page
+
+![ClinicAssist Landing Page](docs/images/landing-page.png)
+
+### Patient Booking
+
+![Patient Booking](docs/images/patient-booking.png)
+
+### Doctor Dashboard
+
+![Doctor Dashboard](docs/images/doctor-dashboard.png)
+
+### Admin Dashboard
+
+![Admin Dashboard](docs/images/admin-dashboard.png)
+
+### Appointment Confirmation
+
+![Appointment Confirmation](docs/images/appointment-confirmation.png)
+
+### Prescription
+
+![Prescription](docs/images/prescription.png)
+
+> Store README screenshots in `docs/images/`.
+
+---
+
+## 🏗️ Application Workflow
+
+```text
+Patient
+   │
+   ├── Register / Login
+   ├── Search Doctor
+   ├── Select Date & Time
+   ├── Describe Symptoms
+   └── Confirm Appointment
+              │
+              ├──────────────► Patient Email
+              ├──────────────► Doctor Email
+              ├──────────────► Calendar
+              └──────────────► Doctor Queue
+                                      │
+                                      ▼
+                              AI Pre-Visit Summary
+                                      │
+                                      ▼
+                                Doctor Consultation
+                                      │
+                         ┌────────────┴────────────┐
+                         ▼                         ▼
+                   Doctor Notes              Prescription
+                         │                         │
+                         └────────────┬────────────┘
+                                      ▼
+                              AI Post-Visit Summary
+                                      │
+                                      ▼
+                                    Patient
+```
+
+---
+
+## 🧰 Technology Stack
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
+
+### Backend
+
+- Node.js
+- Express
+- TypeScript
+- Prisma
+- REST API
+- JWT Authentication
+
+### Database
+
+- PostgreSQL
+
+### AI
+
+- Google Gemini API
+
+Used for pre-visit summaries, urgency classification, suggested questions, and post-visit patient-friendly summaries.
+
+### Integrations
+
+- Google Sign-In
+- Google Calendar
+- Transactional email
+- JWT authentication
+
+### Tools
+
+- Git
+- GitHub
+- VS Code
+- Postman
+
+---
+
+# 🚀 Setup Guide
 
 ## Prerequisites
-
-Install the following before running ClinicAssist:
 
 | Requirement | Purpose |
 |---|---|
 | Node.js 18+ | Frontend and backend runtime |
 | PostgreSQL | Application database |
-| Git | Version control |
-| Google Cloud Project | Google Sign-In + Calendar |
-| Gemini API Key | AI-generated visit summaries |
-| Brevo account | Transactional email |
-| VS Code | Recommended development environment |
+| Gemini API key | AI-assisted summaries |
+| Google Cloud project | Google Sign-In / Calendar |
+| OAuth 2.0 credentials | Google authentication and calendar integration |
+| Email provider credentials | Appointment notifications |
 
----
+## Clone Repository
 
-## Backend Setup
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd clinicassist
+```
 
-Open a terminal in the project root:
+## Backend
 
 ```bash
 cd backend
 npm install
 ```
-
-Create your environment file:
-
-```bash
-copy .env.example .env
-```
-
-For Git Bash:
-
-```bash
-cp .env.example .env
-```
-
-Configure the variables in `.env`.
-
-Then generate the Prisma client:
-
-```bash
-npx prisma generate
-```
-
-Run database migrations:
-
-```bash
-npx prisma migrate dev
-```
-
-Start the backend:
-
-```bash
-npm run dev
-```
-
-The backend runs on:
-
-```text
-http://localhost:4000
-```
-
----
-
-## Frontend Setup
-
-Open another terminal:
-
-```bash
-cd frontend
-npm install
-```
-
-Create the frontend environment file:
-
-```bash
-copy .env.example .env
-```
-
-For Git Bash:
-
-```bash
-cp .env.example .env
-```
-
-Start the frontend:
-
-```bash
-npm run dev
-```
-
-The frontend runs on:
-
-```text
-http://localhost:5173
-```
-
----
-
-# 🔐 2. Environment Variables
-
-## Backend
 
 Create:
 
@@ -258,38 +286,18 @@ Create:
 backend/.env
 ```
 
-Example:
+Then start:
 
-```env
-DATABASE_URL="postgresql://USERNAME:PASSWORD@localhost:5432/clinicassist"
-
-JWT_SECRET="your-long-random-secret"
-JWT_EXPIRES_IN="7d"
-
-PORT=4000
-
-CORS_ORIGIN="http://localhost:5173"
-
-APP_URL="http://localhost:5173"
-
-# Gemini
-GEMINI_API_KEY="your-gemini-api-key"
-
-# Email
-BREVO_API_KEY="your-brevo-api-key"
-EMAIL_FROM="your-verified-email@example.com"
-
-# Google OAuth
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
-GOOGLE_REDIRECT_URI="http://localhost:4000/api/calendar/oauth/callback"
+```bash
+npm run dev
 ```
 
-Your project uses `DATABASE_URL`, JWT configuration, Gemini configuration, and Google OAuth-related environment variables in the backend configuration. :contentReference[oaicite:3]{index=3}
-
----
-
 ## Frontend
+
+```bash
+cd frontend
+npm install
+```
 
 Create:
 
@@ -300,658 +308,432 @@ frontend/.env
 Example:
 
 ```env
-VITE_API_URL="http://localhost:4000"
-
-VITE_GOOGLE_CLIENT_ID="your-google-client-id"
+VITE_API_URL=http://localhost:4000
 ```
 
-The `VITE_GOOGLE_CLIENT_ID` is the Google OAuth Client ID used by Google Sign-In in the frontend.
+Start:
 
-The Google OAuth client is shared between the frontend Google Sign-In flow and the backend Google integration.
+```bash
+npm run dev
+```
+
+The frontend is typically available at:
+
+```text
+http://localhost:5173
+```
+Open http://localhost:5173 and sign in with one of the seeded accounts (also shown on the
+login screen):
+
+| Role    | Email                        | Password         |
+|---------|-------------------------------|-------------------|
+| Admin   | admin@clinicassist.example    | AdminPass123!     |
+| Doctor  | dr.sarah@clinicassist.example | DoctorPass123!    |
+| Patient | patient@example.com           | PatientPass123!   |
+
+Seeded demo accounts are pre-verified so they skip the OTP step. Patients can also
+self-register from the login screen (this does go through OTP verification). Doctors and
+admins are provisioned by an existing admin (seed script creates the first one).
 
 ---
 
-> 🔒 **Never commit `.env` files or API keys to GitHub.**
->
-> Store production secrets in your hosting provider's environment-variable dashboard.
+# 🔑 Environment Variables
 
----
-
-# 🗄️ 3. Database
-
-ClinicAssist uses **PostgreSQL with Prisma ORM**.
-
-The Prisma schema manages the application's healthcare entities and relationships.
-
-Core entities include:
-
-### User
-
-Stores authentication and account information for:
-
-- Patients
-- Doctors
-- Admins
-
-Users are separated by their role.
-
-```text
-PATIENT
-DOCTOR
-ADMIN
-```
-
-### Doctor Profile
-
-Contains doctor-specific information such as:
-
-- Specialization
-- Qualifications
-- Working hours
-- Appointment slot duration
-- Leave days
-
-### Appointment
-
-Stores appointment information including:
-
-- Patient
-- Doctor
-- Appointment date
-- Slot start/end
-- Token number
-- Symptoms
-- Appointment status
-- AI pre-visit information
-- Doctor notes
-- Prescription
-- Post-visit summary
-
-### Doctor Messages
-
-Supports doctor/patient communication associated with the healthcare workflow.
-
----
-
-## Preventing Double Booking
-
-Appointment availability is checked before booking, while the database layer is used to maintain appointment consistency.
-
-The goal is to prevent two patients from successfully booking the same doctor's time slot.
-
----
-
-# 🔑 4. Authentication
-
-ClinicAssist supports:
-
-- JWT-based authentication
-- Role-based access
-- Patient registration
-- Doctor authentication
-- Admin authentication
-- Google Sign-In
-- Password reset functionality
-
-The frontend uses the authenticated user's role to route them to the appropriate portal:
-
-```text
-Patient → Patient Dashboard
-Doctor  → Doctor Dashboard
-Admin   → Admin Dashboard
-```
-
----
-
-# 📅 5. Appointment Workflow
-
-The main patient booking flow is:
-
-```text
-Choose Specialization
-        ↓
-Choose Doctor
-        ↓
-Choose Available Date
-        ↓
-Choose Available Time Slot
-        ↓
-Describe Symptoms
-        ↓
-AI Pre-visit Processing
-        ↓
-Confirm Appointment
-        ↓
-Token Number Generated
-        ↓
-Confirmation Email
-        ↓
-Google Calendar
-        ↓
-Doctor Queue
-        ↓
-Doctor Completes Visit
-        ↓
-Prescription + Notes
-        ↓
-AI Post-visit Summary
-        ↓
-Patient Follow-up
-```
-
-The frontend currently follows a multi-step flow of **Doctor → Time → Symptoms → Done** and displays the patient's token after successful booking. :contentReference[oaicite:4]{index=4} :contentReference[oaicite:5]{index=5}
-
----
-
-# 🔌 6. API Reference
-
-Core API areas include:
-
-| Method | Route | Purpose |
-|---|---|---|
-| `POST` | `/api/auth/register` | Patient registration |
-| `POST` | `/api/auth/login` | Login |
-| `POST` | `/api/auth/forgot-password` | Request password reset |
-| `POST` | `/api/auth/reset-password` | Reset password |
-| `GET` | `/api/doctors` | List/search doctors |
-| `GET` | `/api/appointments/available-slots` | Get available appointment slots |
-| `POST` | `/api/appointments/book` | Book appointment |
-| `POST` | `/api/appointments/:id/cancel` | Cancel appointment |
-| `POST` | `/api/appointments/:id/post-visit` | Complete visit |
-| `GET` | `/api/calendar/connect` | Start Google Calendar connection |
-| `GET` | `/api/calendar/oauth/callback` | Google Calendar OAuth callback |
-
-Authenticated routes use:
-
-```http
-Authorization: Bearer <JWT_TOKEN>
-```
-
----
-
-# 🧠 7. Gemini AI
-
-ClinicAssist uses the **Google Gemini API** for AI-assisted healthcare summaries.
-
-### Pre-visit
-
-Input:
-
-```text
-Patient symptoms
-```
-
-Output:
-
-```text
-Urgency
-Chief complaint
-Suggested questions
-Structured visit brief
-```
-
-### Post-visit
-
-Input:
-
-```text
-Doctor notes
-Prescription
-Visit information
-```
-
-Output:
-
-```text
-Patient-friendly summary
-Medication information
-Follow-up instructions
-```
-
-Add your Gemini key to:
+Backend:
 
 ```env
-GEMINI_API_KEY="your-api-key"
+DATABASE_URL=
+JWT_SECRET=
+JWT_EXPIRES_IN=7d
+
+GEMINI_API_KEY=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=http://localhost:4000/api/calendar/oauth/callback
+
+EMAIL_FROM=
 ```
 
-The Gemini model/configuration is kept in the backend environment rather than exposing the API key to the frontend.
-
----
-
-# 📧 8. Email Notifications
-
-ClinicAssist sends transactional emails for important appointment events.
-
-Examples include:
-
-- Appointment confirmation
-- Appointment cancellation
-- Appointment reminders
-- Follow-up communication
-- Password-related emails
-
-The patient booking confirmation also informs the user that a confirmation email is being sent and provides calendar functionality. :contentReference[oaicite:6]{index=6}
-
-Email configuration:
+Frontend:
 
 ```env
-BREVO_API_KEY="your-api-key"
-EMAIL_FROM="verified-sender@example.com"
+VITE_API_URL=http://localhost:4000
+VITE_GOOGLE_CLIENT_ID=
 ```
 
-The sender address should be verified with the email provider before using it in production.
+> Never commit `.env` files or API keys to GitHub.
 
 ---
 
-# 📆 9. Google Calendar Setup
+# 🤖 Gemini API Setup
 
-ClinicAssist can integrate appointments with Google Calendar.
+1. Open Google AI Studio.
+2. Sign in.
+3. Create an API key.
+4. Add it to the backend:
 
-### Step 1
-
-Open Google Cloud Console:
-
-```text
-https://console.cloud.google.com/
+```env
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-### Step 2
+Keep the Gemini API key on the backend and never expose it in frontend code.
 
-Create or select your project.
+---
 
-### Step 3
+# 🔵 Google Sign-In Setup
 
-Enable:
+Create an OAuth 2.0 Client ID in Google Cloud Console.
 
-```text
-Google Calendar API
-```
-
-### Step 4
-
-Configure the OAuth consent screen.
-
-### Step 5
-
-Create:
-
-```text
-OAuth Client ID
-```
-
-Choose:
-
-```text
-Web application
-```
-
-### Step 6
-
-Add the frontend origin:
+For the local frontend, add:
 
 ```text
 http://localhost:5173
 ```
 
-under:
+as an authorized JavaScript origin.
 
-```text
-Authorized JavaScript origins
-```
-
-### Step 7
-
-Add the backend callback:
+For Calendar, add:
 
 ```text
 http://localhost:4000/api/calendar/oauth/callback
 ```
 
-under:
+as an authorized redirect URI.
 
-```text
-Authorized redirect URIs
-```
-
-### Step 8
-
-Add the credentials to:
-
-```env
-GOOGLE_CLIENT_ID="..."
-GOOGLE_CLIENT_SECRET="..."
-GOOGLE_REDIRECT_URI="http://localhost:4000/api/calendar/oauth/callback"
-```
-
-For frontend Google Sign-In:
-
-```env
-VITE_GOOGLE_CLIENT_ID="..."
-```
-
-Use the **same Google OAuth Client ID** where the application requires it.
+Use the production URLs when deploying.
 
 ---
 
-# 🌐 10. Google Sign-In
+# 📅 Google Calendar Setup
 
-Google Sign-In is implemented using Google Identity Services.
-
-Frontend:
-
-```env
-VITE_GOOGLE_CLIENT_ID="your-client-id"
-```
-
-Backend:
-
-```env
-GOOGLE_CLIENT_ID="your-client-id"
-GOOGLE_CLIENT_SECRET="your-client-secret"
-```
-
-For local development, add:
-
-```text
-http://localhost:5173
-```
-
-as an authorized JavaScript origin in Google Cloud.
+1. Create or select a Google Cloud project.
+2. Enable **Google Calendar API**.
+3. Configure the OAuth consent screen.
+4. Create an OAuth 2.0 Client ID.
+5. Select **Web application**.
+6. Add the frontend origin.
+7. Add the backend calendar callback.
+8. Copy Client ID and Secret into `.env`.
+9. Configure `VITE_GOOGLE_CLIENT_ID` on the frontend.
 
 ---
 
-# 🩺 11. Role-Based Portals
+# 🗄️ Database
 
-ClinicAssist provides three dedicated experiences.
+ClinicAssist uses PostgreSQL with Prisma.
 
-### Patient Portal
-
-```text
-Register/Login
-     ↓
-Find Doctor
-     ↓
-Book Appointment
-     ↓
-Describe Symptoms
-     ↓
-Track Token
-     ↓
-Appointment
-     ↓
-Post-visit Summary
-```
-
-### Doctor Portal
-
-```text
-Login
-  ↓
-Today's Queue
-  ↓
-Patient AI Brief
-  ↓
-Consultation
-  ↓
-Clinical Notes
-  ↓
-Prescription
-  ↓
-Complete Visit
-```
-
-### Admin Portal
-
-```text
-Login
-  ↓
-Doctor Management
-  ↓
-Schedules
-  ↓
-Leave Management
-  ↓
-Appointment Management
-  ↓
-Clinic Operations
-```
-
----
-
-# 🖼️ 12. Frontend Assets
-
-Static frontend assets are stored inside:
-
-```text
-frontend/public/images/
-```
-
-For example:
-
-```text
-frontend/public/images/patient.jpg
-```
-
-can be referenced from React as:
-
-```tsx
-<img
-  src="/images/patient.jpg"
-  alt="A patient checking their appointment on a phone"
-/>
-```
-
----
-
-# 🚀 13. Production Deployment
-
-ClinicAssist can be deployed as separate frontend and backend services.
-
-Recommended architecture:
-
-```text
-                    ┌─────────────────┐
-                    │     Patient     │
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │    Frontend     │
-                    │  React + Vite   │
-                    └────────┬────────┘
-                             │
-                         HTTPS API
-                             │
-                    ┌────────▼────────┐
-                    │     Backend     │
-                    │ Node + Express  │
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │   PostgreSQL    │
-                    │     Prisma      │
-                    └─────────────────┘
-
-              External Integrations
-              ├── Google Gemini
-              ├── Google OAuth
-              ├── Google Calendar
-              └── Email Provider
-```
-
-### Frontend
-
-Can be deployed using:
-
-```text
-Vercel
-```
-
-### Backend
-
-Can be deployed using:
-
-```text
-Render
-```
-
-### Database
-
-Use a hosted PostgreSQL provider.
-
----
-
-# 🔒 14. Security
-
-ClinicAssist follows several security practices:
-
-- JWT authentication
-- Role-based authorization
-- Password hashing
-- Environment-based secrets
-- Server-side validation
-- Protected API routes
-- Database constraints
-- CORS configuration
-- OAuth-based Google integration
-- API keys kept on the backend
-- `.env` excluded from Git
-
-> **Important:** ClinicAssist is a software project and should not be represented as medically certified or HIPAA-compliant unless the required legal, security, operational, and contractual requirements have actually been satisfied.
-
----
-
-# 🧪 15. Development Commands
-
-### Backend
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-Prisma:
+After configuring `DATABASE_URL`:
 
 ```bash
 npx prisma generate
-```
-
-```bash
 npx prisma migrate dev
 ```
 
-Open Prisma Studio:
+To inspect the database:
 
 ```bash
 npx prisma studio
 ```
 
-### Frontend
+---
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+# 📆 Appointment Booking Flow
 
-Production build:
+### 1. Choose Doctor
 
-```bash
-npm run build
-```
+Patient searches by specialization and selects a doctor.
+
+### 2. Choose Slot
+
+Patient selects a date and available time.
+
+### 3. Describe Symptoms
+
+Patient submits symptoms before confirming.
+
+### 4. Confirm Appointment
+
+After successful booking:
+
+- Appointment is confirmed
+- Token number can be generated
+- Patient receives confirmation email
+- Doctor receives appointment notification
+- Patient can add the appointment to their calendar
 
 ---
 
-# 🛠️ 16. Troubleshooting
+# 🧠 AI Visit Brief
 
-### Backend cannot connect to PostgreSQL
-
-Check:
-
-```env
-DATABASE_URL="..."
-```
-
-Then verify PostgreSQL is running.
-
-Run:
-
-```bash
-npx prisma generate
-```
-
-and:
-
-```bash
-npx prisma migrate dev
-```
-
-### Google Sign-In does not work
-
-Check:
-
-```env
-VITE_GOOGLE_CLIENT_ID="..."
-```
-
-and make sure:
+Example:
 
 ```text
-http://localhost:5173
+Urgency: Medium
+
+Chief Complaint:
+Dry cough and mild fever for 3 days.
+
+Key Information:
+- Symptoms worse at night
+- No shortness of breath
+- No chest pain
+
+Suggested Questions:
+- Has the fever increased recently?
+- Is the cough producing mucus?
+- Have you taken any medication?
 ```
 
-is configured as an authorized JavaScript origin.
-
-### Google Calendar does not work
-
-Check:
-
-```env
-GOOGLE_CLIENT_ID="..."
-GOOGLE_CLIENT_SECRET="..."
-GOOGLE_REDIRECT_URI="http://localhost:4000/api/calendar/oauth/callback"
-```
-
-The redirect URI in Google Cloud must exactly match the URI used by the backend.
-
-### Gemini does not generate summaries
-
-Check:
-
-```env
-GEMINI_API_KEY="..."
-```
-
-and restart the backend after changing environment variables.
+The exact output depends on the configured AI model and prompts.
 
 ---
 
-# 📌 17. Project Highlights
+# 🩺 Post-Visit Workflow
 
-- 🏥 Full healthcare appointment workflow
-- 👤 Separate patient, doctor, and admin portals
-- 🤖 Gemini-powered pre-visit and post-visit summaries
-- 🎫 Appointment token and queue management
-- 📧 Automated email notifications
-- 📅 Google Calendar integration
-- 🔐 JWT authentication
-- 🔑 Google Sign-In
-- 🗄️ PostgreSQL + Prisma
-- 📱 Responsive React frontend
-- 🔒 Environment-based secret management
-- ⚡ Modern React + TypeScript architecture
+After consultation, the doctor can enter:
+
+- Clinical notes
+- Prescription
+- Medicine frequency
+- Treatment duration
+- Follow-up instructions
+
+ClinicAssist can generate a patient-friendly post-visit summary.
+
+---
+
+# 💊 Prescription Download
+
+After a doctor completes a prescription:
+
+1. Patient opens the completed appointment.
+2. Prescription information is displayed.
+3. Patient can **download the prescription** for personal records.
+
+---
+
+# 🔒 Double-Booking Protection
+
+The backend validates appointment availability before creating an appointment and uses database-level protection where configured.
+
+This prevents relying only on frontend availability checks when multiple users attempt to book the same slot.
+
+---
+
+# 🗂️ Suggested Project Structure
+
+```text
+clinicassist/
+│
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── middleware/
+│   │   └── utils/
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── migrations/
+│   ├── .env.example
+│   └── package.json
+│
+├── frontend/
+│   ├── public/
+│   │   └── images/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── utils/
+│   │   └── api/
+│   ├── .env.example
+│   └── package.json
+│
+├── docs/
+│   └── images/
+│
+└── README.md
+```
+
+---
+
+# 🖼️ Adding Project Images
+
+Recommended screenshot directory:
+
+```text
+docs/images/
+```
+
+Example:
+
+```text
+docs/images/
+├── landing-page.png
+├── login.png
+├── patient-booking.png
+├── doctor-dashboard.png
+├── admin-dashboard.png
+├── appointment-confirmation.png
+└── prescription.png
+```
+
+Reference an image in Markdown:
+
+```md
+![Patient Booking](docs/images/patient-booking.png)
+```
+
+Images inside the frontend public directory can be referenced by the application as:
+
+```text
+/images/filename.png
+```
+
+---
+
+# 🌐 Deployment
+
+ClinicAssist can be deployed with separate frontend and backend services.
+
+### Frontend
+
+- Vercel
+- Netlify
+- Render
+
+### Backend
+
+- Render
+- Railway
+- Other Node.js-compatible hosting
+
+### Database
+
+- Neon
+- Supabase
+- Railway
+- Render
+- Other managed PostgreSQL providers
+
+Before production deployment, update:
+
+- Frontend API URL
+- Google OAuth origins
+- Google OAuth redirect URI
+- Database URL
+- JWT secret
+- Gemini API key
+- Email credentials
+
+---
+
+# ⚠️ Production Security Checklist
+
+- [ ] Use a strong random `JWT_SECRET`
+- [ ] Never commit `.env`
+- [ ] Never expose backend API keys in frontend code
+- [ ] Use HTTPS in production
+- [ ] Configure production CORS
+- [ ] Configure production Google OAuth origins
+- [ ] Configure production Calendar redirect URI
+- [ ] Use a production database
+- [ ] Validate user input
+- [ ] Apply role-based authorization
+- [ ] Protect appointment creation against double booking
+- [ ] Use secure password hashing
+- [ ] Verify email sender configuration
+- [ ] Review AI-generated medical information before relying on it clinically
+
+---
+
+# 🧪 Testing Checklist
+
+## Patient
+
+- [ ] Register
+- [ ] Login
+- [ ] Search doctor
+- [ ] Select appointment slot
+- [ ] Submit symptoms
+- [ ] Book appointment
+- [ ] Receive confirmation email
+- [ ] Add appointment to calendar
+- [ ] View appointment
+- [ ] Download prescription
+- [ ] View post-visit summary
+
+## Doctor
+
+- [ ] Login
+- [ ] View appointment queue
+- [ ] Receive appointment email
+- [ ] View patient symptoms
+- [ ] Review AI visit brief
+- [ ] Complete consultation
+- [ ] Add notes
+- [ ] Create prescription
+- [ ] Complete visit
+
+## Admin
+
+- [ ] Login
+- [ ] Create doctor
+- [ ] Update doctor
+- [ ] Configure working hours
+- [ ] Configure leave days
+- [ ] Manage doctor roster
+
+---
+
+# 🚀 Future Improvements
+
+- Real-time doctor queue updates
+- Automatic appointment reminders
+- SMS / WhatsApp notifications
+- Improved prescription PDF generation
+- Doctor availability calendar
+- Patient medical history timeline
+- Medical document uploads
+- Appointment analytics
+- Multi-clinic support
+- Granular permissions
+- Enhanced audit logging
+- Additional calendar providers
+
+---
+
+# 📌 Important Notes
+
+ClinicAssist is a software project for healthcare appointment and workflow management.
+
+AI-generated summaries are **assistive outputs** and should not be treated as a diagnosis or replacement for a qualified healthcare professional.
+
+Emergency symptoms should be handled through appropriate emergency medical services rather than relying on appointment scheduling or AI-generated summaries.
+
+---
+
+# 👨‍💻 Project
+
+**ClinicAssist**
+
+Smart Healthcare Appointment & Follow-up Management
+
+```text
+Patient ↔ Doctor ↔ Admin
+        │
+        ├── Appointment Scheduling
+        ├── AI-Assisted Visit Summaries
+        ├── Email Notifications
+        ├── Calendar Integration
+        ├── Prescription Management
+        └── Follow-up Management
+```
 
 ---
 
 ## 📄 License
 
-This project is intended for educational, portfolio, and demonstration purposes.
-
----
-
-### ClinicAssist
-
-**Smart Healthcare Appointment & Follow-up Management**
-
-Patient ↔ Doctor ↔ Admin  
-Appointment Booking ↔ AI Visit Brief ↔ Queue Management ↔ Prescription ↔ Follow-up
+Add the project's applicable license information here.
