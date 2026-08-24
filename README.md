@@ -186,10 +186,6 @@ Add project screenshots here.
   </tr>
 </table>
 
-> Screenshots are stored in `frontend/public/images/`.
-
-> Store README screenshots in `docs/images/`.
-
 ---
 
 ## 🏗️ Application Workflow
