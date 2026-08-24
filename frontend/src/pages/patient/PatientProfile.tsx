@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api, extractErrorMessage } from "../../api/client";
 import { Button, Card, Field, inputClass } from "../../components/ui";
 import { ChangePasswordCard } from "../../components/ChangePasswordCard";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
+import { useAuth } from "../../context/AuthContext";
 
 interface PatientProfileData {
   name: string;
@@ -19,12 +22,23 @@ interface PatientProfileData {
 }
 
 export default function PatientProfile() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState<PatientProfileData | null>(null);
   const [form, setForm] = useState<Partial<PatientProfileData>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Account deletion — password-based accounts confirm with their current password;
+  // Google-auth accounts (no user-known password) get an explicit confirm dialog instead.
+  const requiresPassword = user?.authProvider !== "google";
+  const [showDeleteForm, setShowDeleteForm] = useState(false);
+  const [showGoogleDeleteConfirm, setShowGoogleDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     load();
@@ -68,6 +82,19 @@ export default function PatientProfile() {
       setError(extractErrorMessage(err));
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function deleteAccount() {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await api.delete("/patients/me", requiresPassword ? { data: { password: deletePassword } } : undefined);
+      logout();
+      navigate("/login");
+    } catch (err) {
+      setDeleteError(extractErrorMessage(err));
+      setDeleting(false);
     }
   }
 
@@ -208,7 +235,69 @@ export default function PatientProfile() {
         </Button>
 
         <ChangePasswordCard />
+
+        <Card className="glass-card border border-coral/30">
+          <h2 className="font-semibold mb-1 text-sm uppercase tracking-wide text-coral">Danger zone</h2>
+          <p className="text-xs text-ink/50 mb-4">
+            Permanently delete your account, medical profile, and appointment history. This cannot be undone.
+          </p>
+
+          {!showDeleteForm ? (
+            <Button variant="danger" onClick={() => setShowDeleteForm(true)}>
+              Delete my account
+            </Button>
+          ) : (
+            <div className="space-y-3">
+              {requiresPassword && (
+                <Field label="Confirm your password">
+                  <input
+                    type="password"
+                    className={inputClass}
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    placeholder="Enter your password"
+                  />
+                </Field>
+              )}
+              {deleteError && <p className="text-sm text-coral bg-coral-light rounded-lg px-3 py-2">{deleteError}</p>}
+              <div className="flex gap-2">
+                <Button
+                  variant="secondary"
+                  disabled={deleting}
+                  onClick={() => {
+                    setShowDeleteForm(false);
+                    setDeletePassword("");
+                    setDeleteError(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  disabled={deleting || (requiresPassword && deletePassword.length < 1)}
+                  onClick={() => (requiresPassword ? deleteAccount() : setShowGoogleDeleteConfirm(true))}
+                >
+                  {deleting ? "Deleting…" : "Permanently delete account"}
+                </Button>
+              </div>
+            </div>
+          )}
+        </Card>
       </div>
+
+      {showGoogleDeleteConfirm && (
+        <ConfirmDialog
+          title="Delete your account?"
+          message="This permanently deletes your profile, medical details, and appointment history. This cannot be undone."
+          confirmLabel="Delete account"
+          submitting={deleting}
+          onConfirm={() => {
+            setShowGoogleDeleteConfirm(false);
+            deleteAccount();
+          }}
+          onCancel={() => setShowGoogleDeleteConfirm(false)}
+        />
+      )}
     </div>
   );
 }

@@ -9,6 +9,7 @@ export interface CurrentUser {
   email: string;
   phone?: string | null;
   role: Role;
+  authProvider?: string;
   doctorProfileId?: string;
   patientProfileId?: string;
 }

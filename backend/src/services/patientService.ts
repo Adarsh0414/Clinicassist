@@ -1,5 +1,6 @@
+import bcrypt from "bcryptjs";
 import { prisma } from "../config/db";
-import { NotFoundError } from "../utils/errors";
+import { AppError, NotFoundError, UnauthorizedError } from "../utils/errors";
 
 interface UpdatePatientProfileInput {
   dob?: string | null;
@@ -34,4 +35,28 @@ export async function updatePatientProfile(patientId: string, patch: UpdatePatie
       emailRemindersEnabled: patch.emailRemindersEnabled,
     },
   });
+}
+
+/** Deletes a patient's own User account, which cascades (via schema onDelete: Cascade) to
+ *  their PatientProfile, appointments, medication reminders, and Google Calendar
+ *  credential. NotificationLog rows are kept with appointmentId set to null (onDelete:
+ *  SetNull) so delivery history isn't silently lost. This is a hard delete for this
+ *  iteration — same trade-off as doctorService.deleteDoctor, see that comment for the
+ *  rationale.
+ *
+ *  Password-based accounts must confirm with their current password. Google-auth
+ *  accounts have no user-known password (a random one is generated at sign-up), so
+ *  that check is skipped for them — the frontend gates that case with an explicit
+ *  confirmation dialog instead. */
+export async function deletePatientAccount(userId: string, password?: string) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new NotFoundError("Account not found");
+
+  if (user.authProvider === "password") {
+    if (!password) throw new AppError("Enter your password to confirm account deletion", 400);
+    const valid = await bcrypt.compare(password, user.passwordHash);
+    if (!valid) throw new UnauthorizedError("Incorrect password");
+  }
+
+  await prisma.user.delete({ where: { id: userId } });
 }

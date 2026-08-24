@@ -49,6 +49,12 @@ export const changePasswordSchema = z.object({
   newPassword: z.string().min(8),
 });
 
+// password is omitted entirely for Google-auth accounts (they have no user-known
+// password to confirm with) — the service layer decides whether it's required.
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1).optional(),
+});
+
 const workingHoursSchema = z.record(z.string(), z.object({ start: z.string(), end: z.string() }));
 
 export const createDoctorSchema = z.object({

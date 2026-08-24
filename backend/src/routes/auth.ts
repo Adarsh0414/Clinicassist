@@ -232,6 +232,7 @@ authRouter.get("/me", authenticate, async (req, res) => {
     email: user.email,
     phone: user.phone,
     role: user.role,
+    authProvider: user.authProvider,
     doctorProfileId: user.doctorProfile?.id,
     patientProfileId: user.patientProfile?.id,
   });

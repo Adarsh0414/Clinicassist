@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate, requireRole } from "../middleware/auth";
-import { updatePatientProfileSchema } from "../utils/validation";
-import { getPatientByUserId, updatePatientProfile } from "../services/patientService";
+import { deleteAccountSchema, updatePatientProfileSchema } from "../utils/validation";
+import { deletePatientAccount, getPatientByUserId, updatePatientProfile } from "../services/patientService";
 
 export const patientsRouter = Router();
 patientsRouter.use(authenticate, requireRole("PATIENT"));
@@ -29,4 +29,13 @@ patientsRouter.patch("/me", async (req, res) => {
   const data = updatePatientProfileSchema.parse(req.body);
   const updated = await updatePatientProfile(req.auth!.patientProfileId!, data);
   res.json(updated);
+});
+
+/** Self-service account deletion. Requires the current password for password-based
+ *  accounts (see deletePatientAccount); the request body may be omitted entirely for
+ *  Google-auth accounts. */
+patientsRouter.delete("/me", async (req, res) => {
+  const data = deleteAccountSchema.parse(req.body ?? {});
+  await deletePatientAccount(req.auth!.userId, data.password);
+  res.status(204).send();
 });
