@@ -145,27 +145,27 @@ Add project screenshots here.
 
 ### Landing Page
 
-![ClinicAssist Landing Page](docs/images/landing-page.png)
+![ClinicAssist Landing Page](frontend/public/images/landing-page.png)
 
 ### Patient Booking
 
-![Patient Booking](docs/images/patient-booking.png)
+![Patient Booking](frontend/public/images/patient-booking.png)
 
 ### Doctor Dashboard
 
-![Doctor Dashboard](docs/images/doctor-dashboard.png)
+![Doctor Dashboard](frontend/public/images/doctor-dashboard.png)
 
 ### Admin Dashboard
 
-![Admin Dashboard](docs/images/admin-dashboard.png)
+![Admin Dashboard](frontend/public/images/admin-dashboard.png)
 
 ### Appointment Confirmation
 
-![Appointment Confirmation](docs/images/appointment-confirmation.png)
+![Appointment Confirmation](frontend/public/images/appointment-confirmation.jpeg)
 
 ### Prescription
 
-![Prescription](docs/images/prescription.png)
+![Prescription](frontend/public/images/prescription.png)
 
 > Store README screenshots in `docs/images/`.
 
