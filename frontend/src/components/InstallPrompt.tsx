@@ -168,7 +168,7 @@ export function InstallPrompt() {
         onClick={() => setOpen(true)}
         aria-label="Install ClinicAssist"
         style={{ top: pos.top, right: pos.right }}
-        className="fixed z-30 w-12 h-12 rounded-full bg-teal text-white shadow-card flex items-center justify-center btn-press hover:bg-teal-dark transition-colors animate-fade-in-scale"
+        className="fixed z-30 w-12 h-12 rounded-full bg-transparent text-teal shadow-none flex items-center justify-center btn-press hover:bg-transparent transition-colors animate-fade-in-scale"
       >
         <HeartPulse className="text-lg" />
         <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-coral border-2 border-white" />
