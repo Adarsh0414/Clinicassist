@@ -1,435 +1,957 @@
-# ClinicAssist — Smart Healthcare Appointment & Follow-up Management
+# 🏥 ClinicAssist
 
-A healthcare appointment platform with separate portals for **patients**, **doctors**, and an
-**admin**. Patients book appointments and describe symptoms in advance; doctors get an
-AI-generated pre-visit brief and dictate post-visit notes that are turned into a
-patient-friendly summary; both sides get email and Google Calendar updates automatically.
+A full-stack healthcare appointment and follow-up management platform with separate portals for **patients**, **doctors**, and **clinic admins**.
 
+ClinicAssist streamlines the complete appointment workflow — from doctor discovery and symptom collection to appointment booking, AI-assisted pre-visit briefs, live queue management, prescriptions, follow-up summaries, email notifications, Google Sign-In, and Google Calendar integration.
+
+## ✨ Features
+
+### 👤 Patients
+
+- Register and securely log in
+- Sign in with Google
+- Browse doctors by specialization
+- View available appointment slots
+- Book appointments
+- Describe symptoms before the visit
+- Receive an AI-generated pre-visit summary
+- Get appointment token numbers
+- Track appointment and queue status
+- Cancel appointments
+- Receive appointment confirmation emails
+- Add appointments to calendar
+- View post-visit summaries
+- View prescriptions and follow-up information
+
+The booking flow collects symptoms before confirmation and informs the doctor that an AI-generated summary and urgency flag will be available before the visit. :contentReference[oaicite:2]{index=2}
+
+### 👨‍⚕️ Doctors
+
+- Secure doctor login
+- View today's appointments
+- Manage live patient queue
+- View patient symptoms before the appointment
+- View AI-generated visit briefs
+- See urgency indicators
+- View patient appointment history
+- Add clinical notes
+- Create prescriptions
+- Complete visits
+- Generate patient-friendly post-visit summaries
+- Manage working schedule
+- Handle appointment-related actions
+
+### 🛡️ Clinic Admins
+
+- Secure admin dashboard
+- Create and manage doctor accounts
+- Manage doctor specializations
+- Configure working hours
+- Configure appointment slot duration
+- Manage doctor leave
+- View appointments
+- Manage clinic operations
+- Monitor notification activity
+
+---
+
+## 🤖 AI-Assisted Healthcare Workflow
+
+ClinicAssist uses Gemini to assist doctors with pre-visit and post-visit information.
+
+### Pre-visit AI Brief
+
+Before an appointment, the patient's symptoms are processed into a structured brief containing information such as:
+
+- Urgency level
+- Chief complaint
+- Key symptoms
+- Suggested questions for the doctor
+
+Example:
+
+> **Medium urgency**
+>
+> Dry cough and mild fever for 3 days, worse at night.
+>
+> No shortness of breath  
+> No chest pain
+
+The AI summary is intended to help doctors prepare for the visit and does **not replace professional medical judgment or emergency services**.
+
+### Post-visit Summary
+
+After the doctor completes a visit, ClinicAssist can generate a patient-friendly summary containing:
+
+- Visit summary
+- Medication instructions
+- Follow-up information
+- Important instructions for the patient
+
+---
+
+## 🏗️ Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React + TypeScript + Vite |
+| Styling | Tailwind CSS |
+| Backend | Node.js + Express |
+| Database | PostgreSQL |
+| ORM | Prisma |
+| Authentication | JWT |
+| Google Authentication | Google Identity Services |
+| AI | Google Gemini API |
+| Email | Brevo / transactional email |
+| Calendar | Google Calendar API |
+| API Testing | Postman |
+| Version Control | Git + GitHub |
+| Development | VS Code |
+
+---
+
+## 📁 Project Structure
+
+```text
+ClinicAssist/
+│
+├── frontend/
+│   ├── public/
+│   │   └── images/
+│   │       └── patient.jpg
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── ...
+│   ├── .env.example
+│   └── package.json
+│
+├── backend/
+│   ├── prisma/
+│   │   └── schema.prisma
+│   ├── src/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── middleware/
+│   │   ├── utils/
+│   │   └── ...
+│   ├── .env.example
+│   └── package.json
+│
+├── README.md
+└── ...
 ```
-ham/
-├── backend/     Express + TypeScript API, Prisma ORM (PostgreSQL), background jobs
-├── frontend/    React + Vite + TypeScript, three role-based portals
-└── docs/        System design write-up
+
+---
+
+# 🚀 1. Setup Guide
+
+## Prerequisites
+
+Install the following before running ClinicAssist:
+
+| Requirement | Purpose |
+|---|---|
+| Node.js 18+ | Frontend and backend runtime |
+| PostgreSQL | Application database |
+| Git | Version control |
+| Google Cloud Project | Google Sign-In + Calendar |
+| Gemini API Key | AI-generated visit summaries |
+| Brevo account | Transactional email |
+| VS Code | Recommended development environment |
+
+---
+
+## Backend Setup
+
+Open a terminal in the project root:
+
+```bash
+cd backend
+npm install
 ```
 
-## 1. Quick start
+Create your environment file:
 
-### Prerequisites
-- Node.js 18+
-- npm
-- PostgreSQL running locally (or any Postgres connection string you already have)
+```bash
+copy .env.example .env
+```
+
+For Git Bash:
+
+```bash
+cp .env.example .env
+```
+
+Configure the variables in `.env`.
+
+Then generate the Prisma client:
+
+```bash
+npx prisma generate
+```
+
+Run database migrations:
+
+```bash
+npx prisma migrate dev
+```
+
+Start the backend:
+
+```bash
+npm run dev
+```
+
+The backend runs on:
+
+```text
+http://localhost:4000
+```
+
+---
+
+## Frontend Setup
+
+Open another terminal:
+
+```bash
+cd frontend
+npm install
+```
+
+Create the frontend environment file:
+
+```bash
+copy .env.example .env
+```
+
+For Git Bash:
+
+```bash
+cp .env.example .env
+```
+
+Start the frontend:
+
+```bash
+npm run dev
+```
+
+The frontend runs on:
+
+```text
+http://localhost:5173
+```
+
+---
+
+# 🔐 2. Environment Variables
+
+## Backend
+
+Create:
+
+```text
+backend/.env
+```
+
+Example:
+
+```env
+DATABASE_URL="postgresql://USERNAME:PASSWORD@localhost:5432/clinicassist"
+
+JWT_SECRET="your-long-random-secret"
+JWT_EXPIRES_IN="7d"
+
+PORT=4000
+
+CORS_ORIGIN="http://localhost:5173"
+
+APP_URL="http://localhost:5173"
+
+# Gemini
+GEMINI_API_KEY="your-gemini-api-key"
+
+# Email
+BREVO_API_KEY="your-brevo-api-key"
+EMAIL_FROM="your-verified-email@example.com"
+
+# Google OAuth
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+GOOGLE_REDIRECT_URI="http://localhost:4000/api/calendar/oauth/callback"
+```
+
+Your project uses `DATABASE_URL`, JWT configuration, Gemini configuration, and Google OAuth-related environment variables in the backend configuration. :contentReference[oaicite:3]{index=3}
+
+---
+
+## Frontend
+
+Create:
+
+```text
+frontend/.env
+```
+
+Example:
+
+```env
+VITE_API_URL="http://localhost:4000"
+
+VITE_GOOGLE_CLIENT_ID="your-google-client-id"
+```
+
+The `VITE_GOOGLE_CLIENT_ID` is the Google OAuth Client ID used by Google Sign-In in the frontend.
+
+The Google OAuth client is shared between the frontend Google Sign-In flow and the backend Google integration.
+
+---
+
+> 🔒 **Never commit `.env` files or API keys to GitHub.**
+>
+> Store production secrets in your hosting provider's environment-variable dashboard.
+
+---
+
+# 🗄️ 3. Database
+
+ClinicAssist uses **PostgreSQL with Prisma ORM**.
+
+The Prisma schema manages the application's healthcare entities and relationships.
+
+Core entities include:
+
+### User
+
+Stores authentication and account information for:
+
+- Patients
+- Doctors
+- Admins
+
+Users are separated by their role.
+
+```text
+PATIENT
+DOCTOR
+ADMIN
+```
+
+### Doctor Profile
+
+Contains doctor-specific information such as:
+
+- Specialization
+- Qualifications
+- Working hours
+- Appointment slot duration
+- Leave days
+
+### Appointment
+
+Stores appointment information including:
+
+- Patient
+- Doctor
+- Appointment date
+- Slot start/end
+- Token number
+- Symptoms
+- Appointment status
+- AI pre-visit information
+- Doctor notes
+- Prescription
+- Post-visit summary
+
+### Doctor Messages
+
+Supports doctor/patient communication associated with the healthcare workflow.
+
+---
+
+## Preventing Double Booking
+
+Appointment availability is checked before booking, while the database layer is used to maintain appointment consistency.
+
+The goal is to prevent two patients from successfully booking the same doctor's time slot.
+
+---
+
+# 🔑 4. Authentication
+
+ClinicAssist supports:
+
+- JWT-based authentication
+- Role-based access
+- Patient registration
+- Doctor authentication
+- Admin authentication
+- Google Sign-In
+- Password reset functionality
+
+The frontend uses the authenticated user's role to route them to the appropriate portal:
+
+```text
+Patient → Patient Dashboard
+Doctor  → Doctor Dashboard
+Admin   → Admin Dashboard
+```
+
+---
+
+# 📅 5. Appointment Workflow
+
+The main patient booking flow is:
+
+```text
+Choose Specialization
+        ↓
+Choose Doctor
+        ↓
+Choose Available Date
+        ↓
+Choose Available Time Slot
+        ↓
+Describe Symptoms
+        ↓
+AI Pre-visit Processing
+        ↓
+Confirm Appointment
+        ↓
+Token Number Generated
+        ↓
+Confirmation Email
+        ↓
+Google Calendar
+        ↓
+Doctor Queue
+        ↓
+Doctor Completes Visit
+        ↓
+Prescription + Notes
+        ↓
+AI Post-visit Summary
+        ↓
+Patient Follow-up
+```
+
+The frontend currently follows a multi-step flow of **Doctor → Time → Symptoms → Done** and displays the patient's token after successful booking. :contentReference[oaicite:4]{index=4} :contentReference[oaicite:5]{index=5}
+
+---
+
+# 🔌 6. API Reference
+
+Core API areas include:
+
+| Method | Route | Purpose |
+|---|---|---|
+| `POST` | `/api/auth/register` | Patient registration |
+| `POST` | `/api/auth/login` | Login |
+| `POST` | `/api/auth/forgot-password` | Request password reset |
+| `POST` | `/api/auth/reset-password` | Reset password |
+| `GET` | `/api/doctors` | List/search doctors |
+| `GET` | `/api/appointments/available-slots` | Get available appointment slots |
+| `POST` | `/api/appointments/book` | Book appointment |
+| `POST` | `/api/appointments/:id/cancel` | Cancel appointment |
+| `POST` | `/api/appointments/:id/post-visit` | Complete visit |
+| `GET` | `/api/calendar/connect` | Start Google Calendar connection |
+| `GET` | `/api/calendar/oauth/callback` | Google Calendar OAuth callback |
+
+Authenticated routes use:
+
+```http
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+# 🧠 7. Gemini AI
+
+ClinicAssist uses the **Google Gemini API** for AI-assisted healthcare summaries.
+
+### Pre-visit
+
+Input:
+
+```text
+Patient symptoms
+```
+
+Output:
+
+```text
+Urgency
+Chief complaint
+Suggested questions
+Structured visit brief
+```
+
+### Post-visit
+
+Input:
+
+```text
+Doctor notes
+Prescription
+Visit information
+```
+
+Output:
+
+```text
+Patient-friendly summary
+Medication information
+Follow-up instructions
+```
+
+Add your Gemini key to:
+
+```env
+GEMINI_API_KEY="your-api-key"
+```
+
+The Gemini model/configuration is kept in the backend environment rather than exposing the API key to the frontend.
+
+---
+
+# 📧 8. Email Notifications
+
+ClinicAssist sends transactional emails for important appointment events.
+
+Examples include:
+
+- Appointment confirmation
+- Appointment cancellation
+- Appointment reminders
+- Follow-up communication
+- Password-related emails
+
+The patient booking confirmation also informs the user that a confirmation email is being sent and provides calendar functionality. :contentReference[oaicite:6]{index=6}
+
+Email configuration:
+
+```env
+BREVO_API_KEY="your-api-key"
+EMAIL_FROM="verified-sender@example.com"
+```
+
+The sender address should be verified with the email provider before using it in production.
+
+---
+
+# 📆 9. Google Calendar Setup
+
+ClinicAssist can integrate appointments with Google Calendar.
+
+### Step 1
+
+Open Google Cloud Console:
+
+```text
+https://console.cloud.google.com/
+```
+
+### Step 2
+
+Create or select your project.
+
+### Step 3
+
+Enable:
+
+```text
+Google Calendar API
+```
+
+### Step 4
+
+Configure the OAuth consent screen.
+
+### Step 5
+
+Create:
+
+```text
+OAuth Client ID
+```
+
+Choose:
+
+```text
+Web application
+```
+
+### Step 6
+
+Add the frontend origin:
+
+```text
+http://localhost:5173
+```
+
+under:
+
+```text
+Authorized JavaScript origins
+```
+
+### Step 7
+
+Add the backend callback:
+
+```text
+http://localhost:4000/api/calendar/oauth/callback
+```
+
+under:
+
+```text
+Authorized redirect URIs
+```
+
+### Step 8
+
+Add the credentials to:
+
+```env
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+GOOGLE_REDIRECT_URI="http://localhost:4000/api/calendar/oauth/callback"
+```
+
+For frontend Google Sign-In:
+
+```env
+VITE_GOOGLE_CLIENT_ID="..."
+```
+
+Use the **same Google OAuth Client ID** where the application requires it.
+
+---
+
+# 🌐 10. Google Sign-In
+
+Google Sign-In is implemented using Google Identity Services.
+
+Frontend:
+
+```env
+VITE_GOOGLE_CLIENT_ID="your-client-id"
+```
+
+Backend:
+
+```env
+GOOGLE_CLIENT_ID="your-client-id"
+GOOGLE_CLIENT_SECRET="your-client-secret"
+```
+
+For local development, add:
+
+```text
+http://localhost:5173
+```
+
+as an authorized JavaScript origin in Google Cloud.
+
+---
+
+# 🩺 11. Role-Based Portals
+
+ClinicAssist provides three dedicated experiences.
+
+### Patient Portal
+
+```text
+Register/Login
+     ↓
+Find Doctor
+     ↓
+Book Appointment
+     ↓
+Describe Symptoms
+     ↓
+Track Token
+     ↓
+Appointment
+     ↓
+Post-visit Summary
+```
+
+### Doctor Portal
+
+```text
+Login
+  ↓
+Today's Queue
+  ↓
+Patient AI Brief
+  ↓
+Consultation
+  ↓
+Clinical Notes
+  ↓
+Prescription
+  ↓
+Complete Visit
+```
+
+### Admin Portal
+
+```text
+Login
+  ↓
+Doctor Management
+  ↓
+Schedules
+  ↓
+Leave Management
+  ↓
+Appointment Management
+  ↓
+Clinic Operations
+```
+
+---
+
+# 🖼️ 12. Frontend Assets
+
+Static frontend assets are stored inside:
+
+```text
+frontend/public/images/
+```
+
+For example:
+
+```text
+frontend/public/images/patient.jpg
+```
+
+can be referenced from React as:
+
+```tsx
+<img
+  src="/images/patient.jpg"
+  alt="A patient checking their appointment on a phone"
+/>
+```
+
+---
+
+# 🚀 13. Production Deployment
+
+ClinicAssist can be deployed as separate frontend and backend services.
+
+Recommended architecture:
+
+```text
+                    ┌─────────────────┐
+                    │     Patient     │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │    Frontend     │
+                    │  React + Vite   │
+                    └────────┬────────┘
+                             │
+                         HTTPS API
+                             │
+                    ┌────────▼────────┐
+                    │     Backend     │
+                    │ Node + Express  │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │   PostgreSQL    │
+                    │     Prisma      │
+                    └─────────────────┘
+
+              External Integrations
+              ├── Google Gemini
+              ├── Google OAuth
+              ├── Google Calendar
+              └── Email Provider
+```
+
+### Frontend
+
+Can be deployed using:
+
+```text
+Vercel
+```
+
+### Backend
+
+Can be deployed using:
+
+```text
+Render
+```
+
+### Database
+
+Use a hosted PostgreSQL provider.
+
+---
+
+# 🔒 14. Security
+
+ClinicAssist follows several security practices:
+
+- JWT authentication
+- Role-based authorization
+- Password hashing
+- Environment-based secrets
+- Server-side validation
+- Protected API routes
+- Database constraints
+- CORS configuration
+- OAuth-based Google integration
+- API keys kept on the backend
+- `.env` excluded from Git
+
+> **Important:** ClinicAssist is a software project and should not be represented as medically certified or HIPAA-compliant unless the required legal, security, operational, and contractual requirements have actually been satisfied.
+
+---
+
+# 🧪 15. Development Commands
 
 ### Backend
 
 ```bash
 cd backend
-
-# Create a database (skip if you already have one you want to use):
-createdb clinicassist
-
-cp .env.example .env
-# Edit DATABASE_URL to match your local Postgres, e.g.:
-#   DATABASE_URL="postgresql://localhost:5432/clinicassist"
-# or, if your setup needs a user/password:
-#   DATABASE_URL="postgresql://your_username:your_password@localhost:5432/clinicassist"
-# Also fill in GEMINI_API_KEY etc. — see below for what's optional.
-
 npm install
-npx prisma migrate dev --name init   # applies the schema to your Postgres database
-npm run prisma:seed                  # creates a demo admin, doctor, and patient
-npm run dev                          # http://localhost:4000
+npm run dev
 ```
 
-> **Already ran this before and pulled a newer version of this project?** The schema grew
-> new fields (patient medical conditions/reminder preference, doctor qualifications/
-> experience/fee, and email-verification/OTP fields on the account itself). Just run
-> `npx prisma migrate dev --name add_profile_and_auth_fields` again — Prisma detects the
-> diff and generates an additive migration; no data is lost.
+Prisma:
+
+```bash
+npx prisma generate
+```
+
+```bash
+npx prisma migrate dev
+```
+
+Open Prisma Studio:
+
+```bash
+npx prisma studio
+```
 
 ### Frontend
 
 ```bash
 cd frontend
-cp .env.example .env   # optional — only needed for Google Sign-In, see below
 npm install
-npm run dev                          # http://localhost:5173 (proxies /api to :4000)
+npm run dev
 ```
 
-Open http://localhost:5173 and sign in with one of the seeded accounts (also shown on the
-login screen):
+Production build:
 
-| Role    | Email                        | Password         |
-|---------|-------------------------------|-------------------|
-| Admin   | admin@clinicassist.example    | AdminPass123!     |
-| Doctor  | dr.sarah@clinicassist.example | DoctorPass123!    |
-| Patient | patient@example.com           | PatientPass123!   |
+```bash
+npm run build
+```
 
-Seeded demo accounts are pre-verified so they skip the OTP step. Patients can also
-self-register from the login screen (this does go through OTP verification). Doctors and
-admins are provisioned by an existing admin (seed script creates the first one).
+---
 
-### What works with zero configuration
-- Booking, slot availability, double-booking protection, cancellation
-- Leave scheduling (by admin **or** by the doctor themselves) and automatic patient notification
-- Patient, doctor, and admin self-service profiles, including patient-reported medical
-  conditions/allergies visible to the doctor
-- Doctor self-service weekly availability editor
-- Email + password sign-up with OTP email verification, forgot/reset/change password
-- Add-to-calendar (Google link + universal `.ics` download) on every booking
-- Installable PWA — "Add to Home Screen" on mobile, works offline for the app shell
-- Email — falls back to a free [Ethereal](https://ethereal.email) test inbox in development;
-  a preview link for every email (including OTP codes) is printed to the backend console
-- LLM summaries — fall back to a clear, safe placeholder if `GEMINI_API_KEY` is unset
+# 🛠️ 16. Troubleshooting
 
-### What needs configuration
-- **`DATABASE_URL`**: point it at your local Postgres (see above)
-- **Real AI summaries**: set `GEMINI_API_KEY` in `backend/.env`
-- **Real email delivery**: set `BREVO_API_KEY` in `backend/.env` (recommended — see section
-  10) or `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` for any other SMTP provider
-- **"Sign in with Google" button**: set `VITE_GOOGLE_CLIENT_ID` in `frontend/.env` and the
-  matching `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` in `backend/.env` — see [section
-  8](#8-sign-in-options--account-security). Hidden entirely if unset.
-- **Google Calendar sync**: see [section 7](#7-google-calendar-setup)
+### Backend cannot connect to PostgreSQL
 
-## 2. Architecture
+Check:
 
-- **Backend**: Node.js, Express, TypeScript, Prisma ORM (PostgreSQL), JWT auth, Zod
-  validation, `node-cron` background jobs.
-- **Frontend**: React 18, Vite, TypeScript, React Router, Tailwind CSS, Axios,
-  `vite-plugin-pwa`.
-- **Design system**: a "clinical but warm" visual language — muted teal primary, coral
-  reserved strictly for high-urgency/errors, a serif (Lora) for empathetic patient-facing
-  headers paired with IBM Plex Sans/Mono for dense doctor/admin data views, glassmorphism
-  surfaces on cards and the nav bar, and a signature animated "pulse line" motif used as a
-  section divider.
-- **Roles**: `PATIENT`, `DOCTOR`, `ADMIN` — enforced both by route guards on the frontend and
-  middleware on the backend (never trust the client alone).
+```env
+DATABASE_URL="..."
+```
 
-## 3. Progressive Web App
+Then verify PostgreSQL is running.
 
-The frontend is installable. On desktop Chrome/Edge, an install icon appears in the address
-bar; on Android Chrome, a "Add to Home Screen" prompt appears automatically; on iOS Safari,
-use Share → Add to Home Screen. Once installed it runs in its own standalone window with
-the ClinicAssist icon, and the app shell (HTML/CSS/JS) is cached by a service worker so the
-UI still loads if the network briefly drops — API calls themselves use a network-first
-strategy so booking data is never served stale, only the interface shell is cached
-aggressively. Configured in `frontend/vite.config.ts` via `vite-plugin-pwa`; icons live in
-`frontend/public/`.
+Run:
 
-## 4. Profiles & self-service scheduling
+```bash
+npx prisma generate
+```
 
-- **Patients** manage their own contact info, date of birth, gender, blood group, known
-  allergies, address, and an emergency contact — all visible to their doctor before a visit.
-- **Doctors** manage their own bio, qualifications, years of experience, consultation fee,
-  slot duration, and a full weekly availability grid (toggle each day on/off and set custom
-  hours) — no admin required for day-to-day schedule changes. Doctors can also mark their
-  own leave days directly, which triggers the same automatic patient-notification flow as
-  the admin-initiated version (see `SYSTEM_DESIGN.md`, "Doctor leave conflict handling").
-- **Admins** retain full oversight: they can still create doctors, edit any doctor's
-  profile/hours, and mark leave on any doctor's behalf (e.g. for sudden absences).
+and:
 
-## 5. Database schema
+```bash
+npx prisma migrate dev
+```
 
-Defined in `backend/prisma/schema.prisma`. Key entities:
+### Google Sign-In does not work
 
-- **User** — base account (email/password/role) for all three roles.
-- **DoctorProfile** — specialization, slot duration, `workingHoursJson` (per-weekday
-  start/end), linked 1:1 to a `User`.
-- **PatientProfile** — dob/gender, linked 1:1 to a `User`.
-- **DoctorLeave** — one row per doctor per leave date; unique on `(doctorId, date)`.
-- **Appointment** — the core entity. Notably:
-  - `status`: `HOLD → CONFIRMED → COMPLETED`, or `CANCELLED` / `RESCHEDULE_NEEDED`.
-  - `slotLockKey`: a **unique, nullable** string (`"<doctorId>_<slotStartISO>"`), set only
-    while the appointment is `HOLD` or `CONFIRMED`. This is what actually prevents
-    double-booking — see [section 6](#6-double-booking--concurrency).
-  - `preVisitSummaryJson` / `postVisitSummaryText` — LLM outputs, stored so they only need
-    to be generated once.
-- **MedicationReminder** — one row per prescribed medication, with computed dose times.
-- **NotificationLog** — every email attempt, success or failure, with retry `attempts`.
-- **GoogleCredential** — a user's stored OAuth refresh token, 1:1 with `User`.
+Check:
 
-## 6. Double-booking & concurrency
+```env
+VITE_GOOGLE_CLIENT_ID="..."
+```
 
-The brief requires that the system "prevent double-booking and handle simultaneous booking
-attempts safely." An application-level check (`SELECT ... WHERE doctorId = ? AND slotStart =
-?`) is not sufficient on its own: two requests can both pass that check before either has
-written its row.
+and make sure:
 
-The actual guarantee comes from the database: `Appointment.slotLockKey` is a **unique
-column**. It's computed as `"<doctorId>_<slotStart ISO string>"` and only populated while an
-appointment is active (`HOLD`/`CONFIRMED`); it's set back to `null` on cancellation or
-reschedule-needed (Postgres allows multiple `NULL`s in a unique index, so freed
-slots don't collide with each other). When two requests race for the same slot, both attempt
-an `INSERT` with the same `slotLockKey` — the database rejects the second one with a unique
-constraint violation, which `appointmentService.bookAppointment` catches and turns into a
-clean `409 Conflict` ("this slot was just taken"). The frontend refreshes the slot list so
-the patient can immediately pick another time. This holds regardless of how many app server
-instances are running, since the guarantee lives in the database, not in memory.
+```text
+http://localhost:5173
+```
 
-A secondary **slot-hold** mechanism (`holdExpiresAt`, default 5 minutes) protects against a
-different failure mode: if the process crashes after reserving a slot but before confirming
-it (e.g. mid-LLM-call), a background job (`jobs/reminderJobs.ts`) reclaims expired holds so
-the slot doesn't stay locked forever.
+is configured as an authorized JavaScript origin.
 
-## 7. Google Calendar setup
+### Google Calendar does not work
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/apis/credentials) and
-   create an OAuth 2.0 Client ID of type **Web application**.
-2. Add `http://localhost:4000/api/calendar/oauth/callback` as an authorized redirect URI
-   (adjust the host for production).
-3. Enable the **Google Calendar API** for the project.
-4. Copy the client ID/secret into `backend/.env` as `GOOGLE_CLIENT_ID` /
-   `GOOGLE_CLIENT_SECRET`.
-5. In the app, an authenticated user calls `GET /api/calendar/connect` to get a Google
-   consent URL, completes the consent screen, and Google redirects back to
-   `/api/calendar/oauth/callback`, which stores their refresh token. From then on, booking or
-   cancelling an appointment automatically creates/deletes an event on that user's calendar
-   (see `services/calendarService.ts`). Calendar sync is opportunistic — if a user never
-   connects, or a Calendar API call fails, booking still succeeds; only the sync step is
-   skipped and logged.
+Check:
 
-## 8. Sign-in options & account security
+```env
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+GOOGLE_REDIRECT_URI="http://localhost:4000/api/calendar/oauth/callback"
+```
 
-- **Email + password**, with mandatory email verification: registering sends a 6-digit code
-  (see section 10 for the email provider) that must be entered on `/verify-otp` before the
-  account can log in. Codes expire after `OTP_EXPIRY_MINUTES` (default 10) and can be resent.
-- **Sign in with Google**: an optional Google Identity Services button appears on the
-  login/register screens whenever `VITE_GOOGLE_CLIENT_ID` (frontend) and `GOOGLE_CLIENT_ID`
-  (backend, same value) are set. The backend verifies the ID token server-side
-  (`google-auth-library`) before trusting it — never trusts a client-asserted email. New
-  Google sign-ups are provisioned as patients and skip OTP verification, since Google has
-  already verified the email address. This is separate from Google **Calendar** sync
-  (section 7), which uses its own OAuth consent screen for calendar write access.
-- **Forgot / reset password**: `/forgot-password` emails a 6-digit code; `/reset-password`
-  exchanges it for a new password. Deliberately returns the same response whether or not the
-  email exists, to avoid leaking which addresses are registered.
-- **Change password**: available from any profile page once logged in, requires the current
-  password.
+The redirect URI in Google Cloud must exactly match the URI used by the backend.
 
-## 9. Calendar export & doctor availability at a glance
+### Gemini does not generate summaries
 
-- Every confirmed booking has an **"Add to calendar"** button offering a one-click Google
-  Calendar link plus a universal `.ics` download (`frontend/src/utils/calendar.ts`) — `.ics`
-  is the standard iCalendar format (RFC 5545) that Apple Calendar, Outlook, Yahoo, and
-  virtually every other calendar app can import directly, so this isn't Google-specific.
-- The doctor list on the booking page shows each doctor's **weekly hours** (grouped into
-  readable ranges, e.g. "Mon–Fri · 9AM–5PM") plus an **"Available now" / "Available today"**
-  badge computed client-side from their working hours. This is a quick at-a-glance signal,
-  not a guarantee — one-off leave days are only reflected once a specific date is picked in
-  the slot picker, which is the actual source of truth for bookability.
+Check:
 
-## 10. Token/queue system, doctor messaging & richer prescriptions
+```env
+GEMINI_API_KEY="..."
+```
 
-- **Token/queue**: each booking gets a sequential token number for that doctor's day. The
-  doctor's agenda shows a live "Now Serving" panel with **Start consultation** and **No-show**
-  actions (`IN_PROGRESS` status = "now serving"); the patient's appointment view polls
-  `GET /appointments/:id/queue-status` every 30s for their token, who's being served, how many
-  patients are ahead, and an estimated wait (patients ahead × the doctor's slot length).
-- **Doctor ↔ Admin messaging**: doctors send a categorized message (technical/account/
-  patient/scheduling/general/other) from `/doctor/messages`; admins see and reply from the
-  Admin console's Messages tab; doctors see the reply in their own history.
-- **Unread badges**: a red count badge appears on the doctor's "Messages" nav link (new admin
-  reply), the admin's "Admin console" nav link and Messages tab (new doctor message), the
-  admin's Notifications tab (failed email deliveries needing attention), and the patient's "My
-  appointments" nav link (an appointment needs rebooking after a doctor went on leave). Badges
-  poll every 20s and clear automatically when the relevant inbox is opened
-  (`DoctorMessage.readByAdmin` / `readByDoctor` flags — see `doctorMessageService.ts`).
-- **Multi-day leave**: marking a doctor unavailable now takes a **From/To** date range (a
-  single day is just a range where both ends match) instead of one day at a time — both the
-  admin console and the doctor's own self-service leave form support it. Internally this
-  creates one `DoctorLeave` row per day (the existing per-day unique constraint didn't need to
-  change) and runs the same affected-patient notification for every day in the range.
-- **Admin: edit & delete doctors**: full roster management, with a confirmation dialog before
-  delete (which cascades to that doctor's profile, leave days, and appointment history — see
-  `deleteDoctor()` in `doctorService.ts` for the trade-offs of hard-delete vs. deactivation).
-- **Richer prescriptions**: medicine name, strength, dosage, frequency, duration, before/after
-  food, and free-text instructions — each field labeled with an example placeholder so a
-  doctor never has to guess the expected format.
-- **Follow-up recommendation**: doctors can flag "follow-up in N days" on a completed visit;
-  the patient sees this on their visit summary and in the "doctor responded" email.
-- **Optional patient mobile number**: collected at booking with a plain-language explanation
-  of why it's asked for, never required, and only shown to the assigned doctor.
-- **Cancellation reason**: patients pick from predefined reasons (or write their own) when
-  cancelling; stored on the appointment for the admin to review cancellation patterns.
-- **Calendar links baked into emails**: the booking confirmation, reschedule, and both
-  reminder emails include a one-click **"Add to Google Calendar"** button, and the
-  confirmation/reschedule emails also attach a universal `.ics` file (works with Apple
-  Calendar, Outlook, and most other calendar apps) — so a patient can add the appointment to
-  their calendar straight from their inbox, not just from inside the app.
+and restart the backend after changing environment variables.
 
-## 11. Rescheduling, visit history, audit log & prescription PDFs
+---
 
-- **Appointment rescheduling**: patients, doctors, or admins can move a booking to a new slot
-  (`POST /appointments/:id/reschedule`) instead of forcing a cancel-and-rebook. Reuses the same
-  unique-`slotLockKey` double-booking protection as a fresh booking, recomputes the token
-  number for the new day, emails the patient the new date/time/token, and updates the Google
-  Calendar event in place (rather than delete-and-recreate) if one exists.
-- **Patient visit history (basic EMR)**: opening any appointment as its doctor surfaces that
-  patient's past *completed* visits — date, doctor, diagnosis notes, prescription, and any
-  follow-up recommendation — via `GET /appointments/:id/history`. This is a history *view*,
-  not a full chart/record system (no cross-visit vitals trending, uploaded documents, etc. —
-  see the roadmap).
-- **Downloadable prescription PDF**: once a visit is completed, the patient (or the doctor/
-  admin) can download a print-ready PDF (`GET /appointments/:id/prescription-pdf`, generated
-  server-side with `pdfkit`) with clinic branding, doctor/patient details, the medicines
-  table, follow-up note, and a signature line.
-- **Audit log**: every doctor create/update/delete, leave marking (self or admin), appointment
-  cancellation/reschedule/completion, and doctor-message reply writes an `AuditLog` entry
-  (actor, action, target, a short human-readable detail, timestamp) — visible to admins at
-  `/admin` → Messages tab's neighbor, the **Audit** tab. Entries snapshot the actor's name as
-  plain text so the log stays readable even if that account is later deleted.
-- **Better-timed reminders**: alongside the existing ~24h-out reminder, a second one fires
-  ~1–2h before the appointment, using a separate `NotificationType` so the two don't collide
-  in the "already sent" dedup check.
+# 📌 17. Project Highlights
 
-## 12. LLM prompts
+- 🏥 Full healthcare appointment workflow
+- 👤 Separate patient, doctor, and admin portals
+- 🤖 Gemini-powered pre-visit and post-visit summaries
+- 🎫 Appointment token and queue management
+- 📧 Automated email notifications
+- 📅 Google Calendar integration
+- 🔐 JWT authentication
+- 🔑 Google Sign-In
+- 🗄️ PostgreSQL + Prisma
+- 📱 Responsive React frontend
+- 🔒 Environment-based secret management
+- ⚡ Modern React + TypeScript architecture
 
-Both live in `backend/src/services/llmService.ts` and call the Gemini `generateContent` API
-directly with a `systemInstruction` constraining the model to strict JSON output.
+---
 
-**Pre-visit summary** (triggered automatically when a patient submits their symptom form):
-> "Analyse these symptoms and return: urgency level (Low / Medium / High), chief complaint,
-> and three suggested questions for the doctor. Symptoms: `<symptoms>`"
+## 📄 License
 
-**Post-visit summary** (triggered when a doctor submits clinical notes + prescription):
-> "Convert these clinical notes into a patient-friendly summary with medication schedule and
-> follow-up steps: `<notes>`" (prescription data is passed alongside as structured JSON)
+This project is intended for educational, portfolio, and demonstration purposes.
 
-### LLM failure handling
-Every call goes through `callGeminiJson`, which never throws: network errors, timeouts
-(15s), non-200 responses, and malformed JSON are all caught and turned into
-`{ ok: false, error }`. Callers then use a **safe fallback**, not a broken booking:
-- Pre-visit: defaults to **Medium urgency** (never silently Low) with a note that the
-  summary is unavailable, so nothing slips through unreviewed, plus generic starter
-  questions.
-- Post-visit: falls back to the doctor's raw notes plus a plainly-formatted medication
-  schedule computed from the prescription data (no LLM needed for this part).
+---
 
-Both cases are flagged in the API response (`preVisitLlmFailed` / `postVisitLlmFailed`) so
-the UI can visibly warn the doctor/patient rather than silently showing a lower-quality
-summary as if it were normal.
+### ClinicAssist
 
-## 13. API reference
+**Smart Healthcare Appointment & Follow-up Management**
 
-All endpoints are prefixed `/api`. Authenticated routes expect `Authorization: Bearer
-<token>`.
-
-| Method | Path | Role | Description |
-|---|---|---|---|
-| POST | `/auth/register` | public | Patient self-registration — sends an OTP, does not log in yet |
-| POST | `/auth/verify-otp` | public | Verify the registration OTP; returns a token on success |
-| POST | `/auth/resend-otp` | public | Resend the verification OTP |
-| POST | `/auth/login` | public | Login (all roles) — 403 `EmailNotVerified` if unverified |
-| POST | `/auth/google` | public | Sign in / sign up with a verified Google ID token |
-| POST | `/auth/forgot-password` | public | Email a password-reset OTP |
-| POST | `/auth/reset-password` | public | Exchange a reset OTP for a new password |
-| PATCH | `/auth/change-password` | any | Change password (requires current password) |
-| GET | `/auth/me` | any | Current user |
-| PATCH | `/auth/me` | any | Update name/phone |
-| GET | `/patients/me` | PATIENT | Own profile (medical details, emergency contact, etc.) |
-| PATCH | `/patients/me` | PATIENT | Update own profile |
-| GET | `/doctors` | any | List doctors, optional `?specialization=` |
-| GET | `/doctors/me` | DOCTOR | Own profile + working hours |
-| PATCH | `/doctors/me` | DOCTOR | Update own profile, hours, fee, bio — no admin needed |
-| POST | `/doctors/me/leave` | DOCTOR | Mark own leave (date range); notifies affected patients |
-| GET | `/doctors/me/leave` | DOCTOR | List own leave days |
-| GET | `/doctors/:id` | any | Doctor profile |
-| GET | `/doctors/:id/slots?date=YYYY-MM-DD` | any | Available slots for a day |
-| POST | `/doctors` | ADMIN | Create a doctor |
-| PATCH | `/doctors/:id` | ADMIN | Update any doctor's profile/hours |
-| DELETE | `/doctors/:id` | ADMIN | Delete a doctor (cascades to profile/leave/appointments) |
-| POST | `/doctors/:id/leave` | ADMIN | Mark leave (date range) for any doctor; notifies patients |
-| GET | `/doctors/:id/leave` | any | List a doctor's leave days |
-| POST | `/appointments` | PATIENT | Book a slot + submit symptoms (+ optional mobile number) |
-| GET | `/appointments/mine` | PATIENT/DOCTOR | List own appointments |
-| GET | `/appointments/queue/today` | DOCTOR | Today's queue sorted by token |
-| GET | `/appointments/:id/queue-status` | any | Token, now-serving, patients ahead, est. wait |
-| POST | `/appointments/:id/start` | DOCTOR | Call the patient in ("now serving") |
-| POST | `/appointments/:id/no-show` | DOCTOR | Mark a no-show, frees their queue slot |
-| GET | `/appointments/:id` | owner/ADMIN | Appointment detail |
-| POST | `/appointments/:id/cancel` | owner/ADMIN | Cancel (+ optional predefined/custom reason) |
-| POST | `/appointments/:id/reschedule` | owner/ADMIN | Move to a new slot; recomputes token, notifies patient |
-| POST | `/appointments/:id/visit-notes` | DOCTOR | Submit notes + prescription + follow-up flag |
-| GET | `/appointments/:id/history` | DOCTOR/ADMIN | That patient's past completed visits |
-| GET | `/appointments/:id/prescription-pdf` | owner/ADMIN | Download a print-ready prescription PDF |
-| GET | `/doctor-messages/mine` | DOCTOR | Own messages to admin + replies |
-| GET | `/doctor-messages/mine/unread-count` | DOCTOR | Unread reply count (nav badge) |
-| POST | `/doctor-messages/mine/mark-read` | DOCTOR | Mark own messages as read |
-| POST | `/doctor-messages` | DOCTOR | Send a categorized message to admin |
-| GET | `/doctor-messages` | ADMIN | All doctor messages, optional `?status=` |
-| GET | `/doctor-messages/unread-count` | ADMIN | Unread message count (nav badge) |
-| POST | `/doctor-messages/mark-all-read` | ADMIN | Mark all messages as read |
-| POST | `/doctor-messages/:id/reply` | ADMIN | Reply, marks the message resolved |
-| GET | `/appointments/attention-count` | PATIENT | Count needing attention (nav badge) |
-| GET | `/admin/stats` | ADMIN | Dashboard counts |
-| GET | `/admin/appointments` | ADMIN | All appointments |
-| GET | `/admin/notifications` | ADMIN | Email delivery log |
-| GET | `/admin/audit-log` | ADMIN | Traceable log of state-changing actions |
-| GET | `/calendar/connect` | any | Start Google OAuth |
-| GET | `/calendar/status` | any | Whether calendar is connected |
-| DELETE | `/calendar/disconnect` | any | Remove stored credential |
-
-Errors are JSON: `{ "error": "ErrorType", "message": "...", "details"?: [...] }`.
-
-## 14. Background jobs (`backend/src/jobs/reminderJobs.ts`)
-
-| Schedule | Job |
-|---|---|
-| every 5 min | Release expired slot holds; retry failed email sends (up to 5 attempts) |
-| every 15 min | Send medication reminders whose scheduled time has arrived (deduped per day) |
-| hourly | Send appointment reminders ~24h before the visit (deduped via `NotificationLog`) |
-
-## 15. Security notes (production hardening)
-
-This is a technical-assessment-scale build; before real deployment:
-- Encrypt `GoogleCredential.refreshToken` at rest (e.g. via `pgcrypto` or an app-level KMS).
-- Move `JWT_SECRET` to a real secrets manager; rotate periodically.
-- Add rate limiting on `/auth/login` and `/auth/register`.
-- Use a production-grade managed Postgres instance (with connection pooling, e.g. PgBouncer
-  or your provider's pooler) once traffic grows beyond a single small instance.
-- Add HTTPS termination and set `secure`/`sameSite` cookie flags if you move off
-  bearer-token-in-localStorage.
-
-## 16. Deploying
-
-- **Backend**: any Node host (Render, Railway, Fly.io). Set the env vars from
-  `.env.example`, run `npx prisma migrate deploy` then `npm run build && npm start`.
-- **Frontend**: `npm run build` produces `dist/`; deploy as a static site (Vercel, Netlify,
-  Render static site) and point it at the backend URL (set `CLIENT_URL` on the backend to
-  match, and update the Vite proxy / add a `VITE_API_URL` env if the frontend and backend
-  aren't on the same domain).
-
-## 17. Roadmap — not yet built
-
-Being direct about scope: the items below are each a substantial feature in their own right
-and are **not** in this build yet. Listed in roughly the order they'd be tackled next:
-
-- **Walk-in patients & a receptionist role** — admin/receptionist creates a walk-in patient +
-  appointment that enters the same token queue as online bookings.
-- **Uploaded medical reports** (blood tests, X-rays, etc.) — needs file storage (S3-compatible
-  bucket) plus doctor-side viewing. (Prescriptions are already downloadable as PDF — see
-  section 11 — this item is specifically about *patient-uploaded* documents.)
-- **WhatsApp/SMS reminders** as an optional channel alongside the existing email reminders
-  (24h and 1–2h out are both already built — see section 11).
-- **Family member profiles** under one patient account.
-- **Doctor verification** (registration number, documents, a "Verified ✓" badge).
-- **Full RBAC with a RECEPTIONIST role**, separate from admin.
-- **Analytics dashboards** (charts for appointments/day, cancellation & no-show rate, most-
-  booked doctors, etc.) for both admin and doctor.
-- **Payment/billing** (consultation fees, online payment, invoices, refunds).
-- **Real push notifications** — the PWA install/offline support is real (section 3), but
-  *push* notifications specifically need a VAPID key pair and a subscription flow; today the
-  app relies on email for all async notifications, which works everywhere without extra setup.
-- **"Doctor is running late" broadcast** to the day's waiting queue.
-
-## 18. A note on the visual design
-
-The dashboard/PWA mockups and the landing-page reference shared during development were used
-as **direction**, not traced pixel-for-pixel: this build reuses ClinicAssist's own established
-design system (teal/coral/amber palette, Lora serif + IBM Plex Sans, the pulse-line motif)
-throughout, including on the new landing page, rather than adopting a different third-party
-site's exact layout, photography, and copy. Recreating another site's specific design
-verbatim (its exact stock photography, headline copy, and composition) isn't something this
-build does — the landing page's hero instead uses a live-feeling mock of the product's own
-queue feature as proof, which stays true to the reference's *spirit* (bold headline + a
-floating card of "real" data) without copying a specific designer's work.
+Patient ↔ Doctor ↔ Admin  
+Appointment Booking ↔ AI Visit Brief ↔ Queue Management ↔ Prescription ↔ Follow-up
