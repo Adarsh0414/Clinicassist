@@ -1,0 +1,287 @@
+// ClinicAssist — Smart Healthcare Appointment & Follow-up Management
+// Prisma schema, running on PostgreSQL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PATIENT
+  DOCTOR
+  ADMIN
+}
+
+enum AppointmentStatus {
+  HOLD               // slot reserved while patient completes symptom form / confirms
+  CONFIRMED
+  IN_PROGRESS        // doctor has called the patient in and started the consultation
+  CANCELLED
+  RESCHEDULE_NEEDED  // doctor went on leave after booking; patient must rebook
+  COMPLETED
+  NO_SHOW
+}
+
+enum NotificationStatus {
+  SENT
+  FAILED
+  RETRYING
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMATION
+  REMINDER_APPOINTMENT
+  REMINDER_APPOINTMENT_SOON
+  REMINDER_MEDICATION
+  CANCELLATION
+  RESCHEDULE_NEEDED
+  DOCTOR_NEW_BOOKING
+  VISIT_COMPLETED
+}
+
+enum DoctorMessageStatus {
+  OPEN
+  RESOLVED
+}
+
+enum LeaveRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  name         String
+  phone        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Email verification & password reset — both use the same one-time-code
+  // fields, distinguished by `otpPurpose`, since a user only ever needs one
+  // pending code at a time.
+  emailVerified   Boolean   @default(false)
+  otpCodeHash     String?
+  otpExpiresAt    DateTime?
+  otpPurpose      String?   // "VERIFY_EMAIL" | "RESET_PASSWORD"
+  authProvider    String    @default("password") // "password" | "google"
+
+  doctorProfile  DoctorProfile?
+  patientProfile PatientProfile?
+  googleCredential GoogleCredential?
+}
+
+model GoogleCredential {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String
+  connectedAt  DateTime @default(now())
+}
+
+model DoctorProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialization     String
+  slotDurationMinutes Int     @default(30)
+  // workingHours JSON shape: { "MON": {"start":"09:00","end":"17:00"}, "TUE": {...}, ... }
+  // A missing weekday key means the doctor does not work that day.
+  workingHoursJson   String   @default("{}")
+  bio                String?
+  qualifications     String?  // e.g. "MBBS, MD (Internal Medicine)"
+  yearsOfExperience  Int?
+  consultationFee    String?  // free-text so any currency/format works, e.g. "$50"
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  leaves        DoctorLeave[]
+  leaveRequests LeaveRequest[]
+  appointments  Appointment[]
+  messages      DoctorMessage[]
+}
+
+model PatientProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dob       DateTime?
+  gender    String?
+  bloodGroup           String?
+  allergies            String?  // free text, e.g. "Penicillin, Peanuts"
+  medicalConditions    String?  // patient-reported, e.g. "Type 2 Diabetes, Hypertension" — shown to the doctor
+  emergencyContactName String?
+  emergencyContactPhone String?
+  address              String?
+  emailRemindersEnabled Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  appointments Appointment[]
+}
+
+model DoctorLeave {
+  id        String   @id @default(cuid())
+  doctorId  String
+  doctor    DoctorProfile @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  date      DateTime // date-only (stored at midnight UTC), the doctor is unavailable this whole day
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@unique([doctorId, date])
+}
+
+// A doctor's request for time off. Submitting this does NOT block the calendar — it only
+// takes effect (creating the actual DoctorLeave rows and notifying affected patients) once
+// an admin approves it. This is the doctor -> admin approval workflow: request, then wait.
+model LeaveRequest {
+  id            String             @id @default(cuid())
+  doctorId      String
+  doctor        DoctorProfile      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  startDate     DateTime           // date-only (stored at midnight UTC)
+  endDate       DateTime           // date-only, inclusive
+  reason        String?
+  status        LeaveRequestStatus @default(PENDING)
+  adminNote     String?            // optional note from the admin, mainly used on rejection
+  decidedByName String?            // snapshot of the admin's name at decision time
+  decidedAt     DateTime?
+  createdAt     DateTime           @default(now())
+
+  @@index([doctorId, status])
+  @@index([status])
+}
+
+model Appointment {
+  id       String @id @default(cuid())
+  patientId String
+  patient   PatientProfile @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctorId  String
+  doctor    DoctorProfile @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  slotStart DateTime
+  slotEnd   DateTime
+  status    AppointmentStatus @default(HOLD)
+
+  // slotLockKey is set to "<doctorId>_<slotStart ISO>" whenever status is HOLD or CONFIRMED,
+  // and cleared to null on cancellation/reschedule-needed. The unique index below is what
+  // actually prevents double-booking, including under concurrent requests: Postgres
+  // rejects the second insert/update with a unique-constraint violation, which the booking
+  // service catches and turns into a friendly "slot no longer available" response.
+  slotLockKey String? @unique
+
+  holdExpiresAt DateTime? // HOLD rows past this time are reclaimed by the cleanup job
+
+  // Token/queue number — sequential per doctor per day, assigned at booking time.
+  // tokenDate is the UTC start-of-day the token belongs to, so "today's queue" is a
+  // simple range query. Not enforced unique at the DB level (unlike slotLockKey):
+  // a duplicate token under a rare race is a display glitch, not a safety issue like
+  // double-booking, so the simpler non-transactional count-based assignment is an
+  // acceptable trade-off here.
+  tokenNumber Int?
+  tokenDate   DateTime?
+
+  patientMobile String? // optional, separate from the account phone — patient can give a
+                         // different number just for this visit ("doctor may contact you directly")
+
+  symptomsText       String?
+  preVisitSummaryJson String?  // {"urgency":"High","chiefComplaint":"...","questions":["...","...","..."]}
+  preVisitLlmFailed   Boolean @default(false)
+
+  doctorNotes         String?
+  prescriptionJson     String? // [{"medication":"Amoxicillin","strength":"500mg","dosage":"1 tablet","frequencyPerDay":3,"durationDays":7,"foodTiming":"after","instructions":"..."}]
+  postVisitSummaryText String?
+  postVisitLlmFailed   Boolean @default(false)
+  followUpRecommended  Boolean  @default(false)
+  followUpAfterDays    Int?
+
+  cancellationReason String? // predefined label or free text, patient-provided on cancel
+
+  // Flips to false whenever something the patient hasn't seen yet happens to this
+  // appointment (doctor completes the visit / sends a prescription, or the doctor's leave
+  // forces a reschedule). Powers the "new update" badge on the patient's dashboard. Reset
+  // to true once the patient opens the appointment's details.
+  readByPatient Boolean @default(true)
+
+  googleEventIdPatient String?
+  googleEventIdDoctor  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  medicationReminders MedicationReminder[]
+  notifications       NotificationLog[]
+
+  @@index([doctorId, slotStart])
+  @@index([patientId])
+}
+
+model MedicationReminder {
+  id             String   @id @default(cuid())
+  appointmentId  String
+  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  medicationName String
+  dosage         String
+  frequencyPerDay Int
+  timesOfDayJson String   // ["09:00","14:00","21:00"]
+  startDate      DateTime
+  endDate        DateTime
+  lastSentDate   DateTime? // date (not time) the last reminder batch was sent, to dedupe per day
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+}
+
+model NotificationLog {
+  id              String   @id @default(cuid())
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  type            NotificationType
+  recipientEmail  String
+  subject         String
+  status          NotificationStatus
+  attempts        Int      @default(1)
+  lastError       String?
+  createdAt       DateTime @default(now())
+}
+
+// A doctor's message/request to admin — technical issue, scheduling problem, patient
+// concern, etc. Kept simple (no attachments) for this iteration.
+model DoctorMessage {
+  id           String   @id @default(cuid())
+  doctorId     String
+  doctor       DoctorProfile @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  category     String   // "technical" | "account" | "patient" | "scheduling" | "general" | "other"
+  subject      String
+  message      String
+  status       DoctorMessageStatus @default(OPEN)
+  adminReply   String?
+  repliedAt    DateTime?
+  readByAdmin  Boolean  @default(false) // unread badge for the admin console
+  readByDoctor Boolean  @default(true)  // flips to false when admin replies, so the doctor sees a "new reply" badge
+  createdAt    DateTime @default(now())
+}
+
+// Records important state-changing actions for traceability — required in healthcare
+// contexts where records shouldn't silently change. Deliberately denormalized (actor
+// name/role snapshotted as text) so the log stays readable even if the actor account is
+// later deleted. Not a full field-level diff — that's a larger feature; this captures
+// "who did what to which record and when," which covers the traceability need for now.
+model AuditLog {
+  id           String   @id @default(cuid())
+  actorUserId  String?
+  actorName    String
+  actorRole    String
+  action       String   // short verb phrase, e.g. "doctor.updated", "appointment.cancelled"
+  targetType   String   // e.g. "DoctorProfile", "Appointment"
+  targetId     String?
+  details      String?  // short human-readable summary, e.g. "Cancelled by patient: Emergency"
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([targetType, targetId])
+}
