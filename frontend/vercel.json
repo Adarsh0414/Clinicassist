@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://clinicassist-backend.onrender.com/api/:path*"
+    }
+  ]
+}
