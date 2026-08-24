@@ -25,6 +25,11 @@ export async function createDoctor(input: CreateDoctorInput) {
       email: input.email,
       passwordHash: input.passwordHash,
       role: "DOCTOR",
+      // An admin creates this account directly and hands the doctor their
+      // credentials out-of-band, so the email is already trusted — same
+      // reasoning as Google sign-in. Skip the OTP-verification gate entirely;
+      // otherwise the doctor is stuck on /verify-otp with no code ever sent.
+      emailVerified: true,
       doctorProfile: {
         create: {
           specialization: input.specialization,
