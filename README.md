@@ -143,8 +143,6 @@ Patients can view the completed prescription and **download it for their records
 
 Add project screenshots here.
 
-## 🖼️ Screenshots
-
 <table>
   <tr>
     <td><strong>Landing Page</strong></td>
