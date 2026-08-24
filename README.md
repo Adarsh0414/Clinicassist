@@ -559,41 +559,6 @@ clinicassist/
 
 ---
 
-# 🖼️ Adding Project Images
-
-Recommended screenshot directory:
-
-```text
-docs/images/
-```
-
-Example:
-
-```text
-docs/images/
-├── landing-page.png
-├── login.png
-├── patient-booking.png
-├── doctor-dashboard.png
-├── admin-dashboard.png
-├── appointment-confirmation.png
-└── prescription.png
-```
-
-Reference an image in Markdown:
-
-```md
-![Patient Booking](docs/images/patient-booking.png)
-```
-
-Images inside the frontend public directory can be referenced by the application as:
-
-```text
-/images/filename.png
-```
-
----
-
 # 🌐 Deployment
 
 ClinicAssist can be deployed with separate frontend and backend services.
@@ -627,64 +592,6 @@ Before production deployment, update:
 - JWT secret
 - Gemini API key
 - Email credentials
-
----
-
-# ⚠️ Production Security Checklist
-
-- [ ] Use a strong random `JWT_SECRET`
-- [ ] Never commit `.env`
-- [ ] Never expose backend API keys in frontend code
-- [ ] Use HTTPS in production
-- [ ] Configure production CORS
-- [ ] Configure production Google OAuth origins
-- [ ] Configure production Calendar redirect URI
-- [ ] Use a production database
-- [ ] Validate user input
-- [ ] Apply role-based authorization
-- [ ] Protect appointment creation against double booking
-- [ ] Use secure password hashing
-- [ ] Verify email sender configuration
-- [ ] Review AI-generated medical information before relying on it clinically
-
----
-
-# 🧪 Testing Checklist
-
-## Patient
-
-- [ ] Register
-- [ ] Login
-- [ ] Search doctor
-- [ ] Select appointment slot
-- [ ] Submit symptoms
-- [ ] Book appointment
-- [ ] Receive confirmation email
-- [ ] Add appointment to calendar
-- [ ] View appointment
-- [ ] Download prescription
-- [ ] View post-visit summary
-
-## Doctor
-
-- [ ] Login
-- [ ] View appointment queue
-- [ ] Receive appointment email
-- [ ] View patient symptoms
-- [ ] Review AI visit brief
-- [ ] Complete consultation
-- [ ] Add notes
-- [ ] Create prescription
-- [ ] Complete visit
-
-## Admin
-
-- [ ] Login
-- [ ] Create doctor
-- [ ] Update doctor
-- [ ] Configure working hours
-- [ ] Configure leave days
-- [ ] Manage doctor roster
 
 ---
 
@@ -733,7 +640,6 @@ Patient ↔ Doctor ↔ Admin
 ```
 
 ---
-
-## 📄 License
-
-Add the project's applicable license information here.
+<p align="center">
+  Patient ↔ doctor ↔ admin appointment workflow · AI-assisted visit summaries · email + calendar notifications
+</p>
