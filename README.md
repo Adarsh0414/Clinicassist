@@ -143,29 +143,50 @@ Patients can view the completed prescription and **download it for their records
 
 Add project screenshots here.
 
-### Landing Page
+## 🖼️ Screenshots
 
-![ClinicAssist Landing Page](frontend/public/images/landing-page.png)
+<table>
+  <tr>
+    <td><strong>Landing Page</strong></td>
+    <td><strong>Patient Booking</strong></td>
+  </tr>
+  <tr>
+    <td>
+      <img src="frontend/public/images/landing-page.png" width="450">
+    </td>
+    <td>
+      <img src="frontend/public/images/patient-booking.png" width="450">
+    </td>
+  </tr>
 
-### Patient Booking
+  <tr>
+    <td><strong>Doctor Dashboard</strong></td>
+    <td><strong>Admin Dashboard</strong></td>
+  </tr>
+  <tr>
+    <td>
+      <img src="frontend/public/images/doctor-dashboard.png" width="450">
+    </td>
+    <td>
+      <img src="frontend/public/images/admin-dashboard.png" width="450">
+    </td>
+  </tr>
 
-![Patient Booking](frontend/public/images/patient-booking.png)
+  <tr>
+    <td><strong>Appointment Confirmation</strong></td>
+    <td><strong>Prescription</strong></td>
+  </tr>
+  <tr>
+    <td>
+      <img src="frontend/public/images/appointment-confirmation.jpeg" width="450">
+    </td>
+    <td>
+      <img src="frontend/public/images/prescription.png" width="450">
+    </td>
+  </tr>
+</table>
 
-### Doctor Dashboard
-
-![Doctor Dashboard](frontend/public/images/doctor-dashboard.png)
-
-### Admin Dashboard
-
-![Admin Dashboard](frontend/public/images/admin-dashboard.png)
-
-### Appointment Confirmation
-
-![Appointment Confirmation](frontend/public/images/appointment-confirmation.jpeg)
-
-### Prescription
-
-![Prescription](frontend/public/images/prescription.png)
+> Screenshots are stored in `frontend/public/images/`.
 
 > Store README screenshots in `docs/images/`.
 
