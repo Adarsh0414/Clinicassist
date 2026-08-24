@@ -204,7 +204,7 @@ export function InstallPrompt() {
 
         <div className="flex items-start gap-3 p-4 pt-1">
           <div className="w-10 h-10 rounded-lg bg-teal-light flex items-center justify-center shrink-0">
-            <span className="text-xl">🏥</span>
+            <HeartPulse className="text-lg" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-ink">Install ClinicAssist</p>
